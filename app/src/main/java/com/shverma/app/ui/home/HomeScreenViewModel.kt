@@ -1,4 +1,6 @@
 package com.shverma.app.ui.home
+
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shverma.app.utils.UiEvent
@@ -7,70 +9,109 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+data class JournalEntry(
+    val date: String,
+    val mood: String,
+    val preview: String
+)
+
+data class MoodSummary(
+    val streak: Int,
+    val trend: String
+)
+
+data class HomeUiState(
+    val userName: String = "",
+    val currentDate: String = "",
+    val prompt: String = "",
+    val recentEntries: List<JournalEntry> = emptyList(),
+    val moodSummary: MoodSummary = MoodSummary(0, "")
+)
+
+
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
-    // Inject repository or use cases here if needed
+class JournAIHomeViewModel @Inject constructor(
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeScreenState())
-    val state: StateFlow<HomeScreenState> = _state.asStateFlow()
+    private val _uiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     var uiEvent = Channel<UiEvent>()
         private set
 
     init {
-        onEvent(HomeScreenEvents.LoadItems)
+        loadInitialData()
     }
 
-    fun onEvent(event: HomeScreenEvents) {
+    fun refreshHomeScreen() {
+        loadInitialData()
+        sendUiEvent(UiEvent.ShowMessage("Home screen refreshed"))
+    }
+
+    fun onEvent(event: JournAIHomeEvents) {
         when (event) {
-            is HomeScreenEvents.LoadItems -> {
-                fetchItems()
+            is JournAIHomeEvents.StartWriting -> {
+                sendUiEvent(UiEvent.ShowMessage("Start Writing clicked"))
             }
 
-            is HomeScreenEvents.Refresh -> {
-                refreshItems()
-            }
-
-            is HomeScreenEvents.DeleteItem -> {
-                viewModelScope.launch {
-                    // repository.deleteItemById(event.id)
-                    uiEvent.send(UiEvent.ShowMessage("Item deleted"))
-                }
+            is JournAIHomeEvents.StartVoiceEntry -> {
+                sendUiEvent(UiEvent.ShowMessage("Voice Entry clicked"))
             }
         }
     }
 
-    private fun fetchItems() {
-        viewModelScope.launch {
-            // Simulate loading data
-            _state.value = _state.value.copy(
-                itemList = listOf("Item 1", "Item 2", "Item 3"),
-                isLoading = false
+    private fun loadInitialData() {
+        _uiState.update { state ->
+            state.copy(
+                userName = "Sarah",
+                currentDate = getCurrentDateFormatted(),
+                prompt = "What made you smile today?",
+                recentEntries = sampleRecentEntries(),
+                moodSummary = MoodSummary(5, "Mostly Positive")
             )
         }
     }
 
-    private fun refreshItems() {
+    @SuppressLint("NewApi")
+    private fun getCurrentDateFormatted(): String {
+        val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+        return LocalDate.now().format(formatter)
+    }
+
+    private fun sampleRecentEntries(): List<JournalEntry> {
+        return listOf(
+            JournalEntry(
+                "Feb 22",
+                "😊 Positive",
+                "Today was a productive day at work. I managed to complete..."
+            ),
+            JournalEntry(
+                "Feb 21",
+                "😊 Happy",
+                "Had a wonderful coffee chat with Sarah this morning..."
+            ),
+            JournalEntry(
+                "Feb 20",
+                "😊 Grateful",
+                "Feeling grateful for the small moments today..."
+            )
+        )
+    }
+
+    private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true)
-            fetchItems()
-            uiEvent.send(UiEvent.ShowMessage("Items refreshed"))
+            uiEvent.send(event)
         }
     }
 }
 
-sealed class HomeScreenEvents {
-    data object LoadItems : HomeScreenEvents()
-    data object Refresh : HomeScreenEvents()
-    data class DeleteItem(val id: Int) : HomeScreenEvents()
+sealed interface JournAIHomeEvents {
+    object StartWriting : JournAIHomeEvents
+    object StartVoiceEntry : JournAIHomeEvents
 }
-
-data class HomeScreenState(
-    val itemList: List<String> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)

@@ -20,7 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.shverma.app.ui.details.DetailScreen
-import com.shverma.app.ui.home.HomeScreen
+import com.shverma.app.ui.home.JournAIHomeScreen
 import com.shverma.app.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
@@ -63,13 +63,13 @@ fun AppNavigation(
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = Routes.HomeRoute,
-            modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
+            startDestination = Routes.JournAIHomeRoute,
+            modifier = Modifier.padding(bottom = padding.calculateBottomPadding(), top  = padding.calculateTopPadding())
         ) {
-            composable<Routes.HomeRoute> {
-                HomeScreen(
+            composable<Routes.JournAIHomeRoute> {
+                JournAIHomeScreen(
                     snackBarHostState = snackBarHostState,
-                    onItemClick = { itemId ->
+                    onClickEntry = { itemId ->
                         navController.navigate(Routes.DetailRoute(itemId))
                     }
                 )
@@ -91,7 +91,7 @@ fun AppNavigation(
 object Routes {
 
     @Serializable
-    object HomeRoute
+    object JournAIHomeRoute
 
     @Serializable
     data class DetailRoute(val id: Int)
