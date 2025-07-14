@@ -1,9 +1,12 @@
 package com.shverma.app.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -38,12 +41,12 @@ import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.utils.UiEvent
 import kotlinx.coroutines.flow.receiveAsFlow
-
 @Composable
 fun JournAIHomeScreen(
     viewModel: JournAIHomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
-    onClickEntry: (Int) -> Unit
+    onClickEntry: (Int) -> Unit,
+    onStartWriting: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -56,7 +59,6 @@ fun JournAIHomeScreen(
                 is UiEvent.ShowMessage -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
-
                 else -> Unit
             }
         }
@@ -79,57 +81,63 @@ fun JournAIHomeScreen(
     Column(
         modifier = Modifier
             .background(JournAIBackground)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         // Header
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "Good morning, ${state.userName}",
             style = AppTypography.titleLarge,
             color = JournAIBrown
         )
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = state.currentDate,
             style = AppTypography.bodyMedium,
             color = JournAIBrown
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
         // Today's Prompt
         PromptCard(
             title = "💡 Today's Prompt",
             content = state.prompt,
+            modifier = Modifier
+                .fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
-        // Start Writing Button
-        JournButton(
-            text = "Start Writing",
-            iconResId = R.drawable.ic_write,
-            backgroundColor = JournAIBrown,
-            contentColor = Color.White,
-            onClick = {
-                showStartWritingDialog = true
-            }
-        )
+        // Buttons side by side
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Start Writing
+            JournButton(
+                text = "Start Writing",
+                iconResId = R.drawable.ic_write,
+                backgroundColor = JournAIBrown,
+                contentColor = Color.White,
+                modifier = Modifier.weight(1f),
+                onClick = { onStartWriting() }
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            // Voice Entry
+            JournButton(
+                text = "Voice Entry",
+                iconResId = R.drawable.ic_record,
+                backgroundColor = JournAIPink,
+                contentColor = JournAIBrown,
+                modifier = Modifier.weight(1f),
+                onClick = { /* ... */ }
+            )
+        }
 
-        // Voice Entry Button
-        JournButton(
-            text = "Voice Entry",
-            iconResId = R.drawable.ic_record,
-            backgroundColor = JournAIPink,
-            contentColor = JournAIBrown,
-            onClick = {
-                showVoiceEntryDialog = true
-            }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         // Recent Entries
         Text(
@@ -137,7 +145,7 @@ fun JournAIHomeScreen(
             style = AppTypography.titleMedium,
             color = JournAIBrown
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         if (state.recentEntries.isEmpty()) {
             Text(
@@ -153,11 +161,11 @@ fun JournAIHomeScreen(
                     mood = entry.mood,
                     contentPreview = entry.preview,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Weekly Mood Summary Card
         MoodSummaryCard(
@@ -167,5 +175,6 @@ fun JournAIHomeScreen(
                 // Optional → navigate to detailed mood summary screen
             }
         )
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

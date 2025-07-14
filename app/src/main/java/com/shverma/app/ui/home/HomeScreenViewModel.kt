@@ -51,7 +51,6 @@ class JournAIHomeViewModel @Inject constructor(
 
     fun refreshHomeScreen() {
         loadInitialData()
-        sendUiEvent(UiEvent.ShowMessage("Home screen refreshed"))
     }
 
     fun onEvent(event: JournAIHomeEvents) {
@@ -104,7 +103,7 @@ class JournAIHomeViewModel @Inject constructor(
         )
     }
 
-    private fun sendUiEvent(event: UiEvent) {
+    fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
             uiEvent.send(event)
         }

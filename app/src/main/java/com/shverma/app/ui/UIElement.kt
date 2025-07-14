@@ -78,7 +78,6 @@ fun JournalCard(
     }
 }
 
-
 @Composable
 fun JournButton(
     text: String,
@@ -92,12 +91,12 @@ fun JournButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(54.dp), // matches your Figma
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp) // matches your design
     ) {
         if (iconResId != null) {
             Icon(
@@ -110,6 +109,7 @@ fun JournButton(
         Text(text = text, style = AppTypography.labelLarge)
     }
 }
+
 
 @Composable
 fun PromptCard(
