@@ -131,6 +131,7 @@ dependencies {
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.jetbrains.kotlin.reflect)
+    implementation(libs.threetenabp)
 }
 
 

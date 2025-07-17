@@ -38,6 +38,7 @@ okhttp3-logging-interceptor-version = "4.12.0"
 retrofit-version = "2.11.0"
 room-version = "2.7.1"
 rules-version = "1.6.1"
+threetenabp = "1.4.0"
 timber-version = "5.0.1"
 ui-android-version = "1.8.2"
 work-runtime-version = "2.10.1"
@@ -123,6 +124,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 squareup-okhttp3-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver-version" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test-version" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabp" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "arch-core-testing-version" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }

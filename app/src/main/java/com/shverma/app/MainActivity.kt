@@ -20,9 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.shverma.app.ui.JournalEntryScreen
+import com.shverma.app.ui.journalentry.JournalEntryScreen
 import com.shverma.app.ui.details.DetailScreen
-import com.shverma.app.ui.home.JournAIHomeScreen
+import com.shverma.app.ui.home.HomeScreen
 import com.shverma.app.ui.theme.AppTheme
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIBackground
@@ -33,14 +33,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import com.shverma.app.ui.theme.JournAIPink
 
@@ -105,28 +103,30 @@ fun AppNavigation(
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            NavigationBar(
-                containerColor = JournAIBackground
-            ) {
-                bottomNavItems.forEach { item ->
-                    NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label) },
-                        selected = currentRoute == item.route.toString(),
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = JournAIPink,
-                            unselectedIconColor = JournAIBrown,
-                            selectedTextColor = JournAIPink,
-                            unselectedTextColor = JournAIBrown
+            if (currentRoute == Routes.JournAIHomeRoute.toString()) {
+                NavigationBar(
+                    containerColor = JournAIBackground
+                ) {
+                    bottomNavItems.forEach { item ->
+                        NavigationBarItem(
+                            icon = { Icon(item.icon, contentDescription = item.label) },
+                            label = { Text(item.label) },
+                            selected = currentRoute == item.route.toString(),
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = JournAIPink,
+                                unselectedIconColor = JournAIBrown,
+                                selectedTextColor = JournAIPink,
+                                unselectedTextColor = JournAIBrown
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -137,14 +137,14 @@ fun AppNavigation(
             modifier = Modifier.padding(bottom = padding.calculateBottomPadding(), top  = padding.calculateTopPadding())
         ) {
             composable<Routes.JournAIHomeRoute> {
-                JournAIHomeScreen(
+                HomeScreen(
                     snackBarHostState = snackBarHostState,
                     onClickEntry = { itemId ->
                         navController.navigate(Routes.DetailRoute(itemId))
                     },
                     onStartWriting = {
                         navController.navigate(Routes.StartWritingRoute)
-                    }
+                    },
                 )
             }
             composable<Routes.JournalRoute> {

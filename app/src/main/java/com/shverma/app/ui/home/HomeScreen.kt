@@ -41,18 +41,16 @@ import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.utils.UiEvent
 import kotlinx.coroutines.flow.receiveAsFlow
+
+
 @Composable
-fun JournAIHomeScreen(
-    viewModel: JournAIHomeViewModel = hiltViewModel(),
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
     onClickEntry: (Int) -> Unit,
     onStartWriting: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-    var showStartWritingDialog by remember { mutableStateOf(false) }
-    var showVoiceEntryDialog by remember { mutableStateOf(false) }
-
     LaunchedEffect(true) {
         viewModel.uiEvent.receiveAsFlow().collect { event ->
             when (event) {
@@ -133,7 +131,7 @@ fun JournAIHomeScreen(
                 backgroundColor = JournAIPink,
                 contentColor = JournAIBrown,
                 modifier = Modifier.weight(1f),
-                onClick = { /* ... */ }
+                onClick = { onClickEntry(1) }
             )
         }
 

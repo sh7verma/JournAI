@@ -1,37 +1,54 @@
-package com.shverma.app.ui
+package com.shverma.app.ui.journalentry
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.SentimentDissatisfied
-import androidx.compose.material.icons.outlined.SentimentNeutral
-import androidx.compose.material.icons.outlined.SentimentSatisfied
-import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
-import androidx.compose.material.icons.outlined.SentimentVerySatisfied
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.shverma.androidstarter.R
+import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.ui.theme.AppTypography
-import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIBackground
+import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
 
 @Composable
 fun JournalEntryScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    journalEntryViewModel: JournalEntryViewModel = viewModel()
 ) {
-    var text by remember { mutableStateOf("") }
-    var selectedMood by remember { mutableStateOf<Mood?>(null) }
+    val uiState = journalEntryViewModel.uiState
+    var text by remember { mutableStateOf(uiState.value.entryText) }
+    var selectedMood by remember { mutableStateOf(uiState.value.selectedMood) }
 
     Column(
         modifier = modifier
@@ -119,13 +136,17 @@ fun JournalEntryScreen(
                             Icon(
                                 imageVector = mood.icon,
                                 contentDescription = mood.label,
-                                tint = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(alpha = 0.5f),
+                                tint = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(
+                                    alpha = 0.5f
+                                ),
                                 modifier = Modifier.size(32.dp)
                             )
                             Text(
                                 text = mood.label,
                                 style = AppTypography.bodyMedium,
-                                color = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(alpha = 0.5f)
+                                color = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(
+                                    alpha = 0.5f
+                                )
                             )
                         }
                     }
@@ -157,7 +178,10 @@ fun JournalEntryScreen(
             }
 
             Button(
-                onClick = { if (text.isNotBlank()) {}/*onSave(text, selectedMood!!)*/ },
+                onClick = {
+                    if (text.isNotBlank()) {
+                    }/*onSave(text, selectedMood!!)*/
+                },
                 shape = RoundedCornerShape(32.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = JournAIBrown,
@@ -187,13 +211,4 @@ fun JournalEntryScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
     }
-}
-
-// Mood enum for icons & labels
-enum class Mood(val label: String, val icon: ImageVector) {
-    Sad("Sad", Icons.Outlined.SentimentVeryDissatisfied),
-    Down("Down", Icons.Outlined.SentimentDissatisfied),
-    Okay("Okay", Icons.Outlined.SentimentNeutral),
-    Good("Good", Icons.Outlined.SentimentSatisfied),
-    Great("Great", Icons.Outlined.SentimentVerySatisfied)
 }
