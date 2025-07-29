@@ -6,6 +6,7 @@ import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
+import com.shverma.app.utils.toOffsetDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,27 +32,23 @@ class DetailsViewModel @Inject constructor(
         private set
 
     init {
-        fetchJournalForDate(LocalDate.now())
+        fetchJournalForDate(OffsetDateTime.now(ZoneOffset.UTC))
     }
 
     fun onDateSelected(date: LocalDate) {
-        _uiState.update { it.copy(selectedDate = date) }
+        onDateSelected(date.toOffsetDateTime())
+    }
+
+    fun onDateSelected(date: OffsetDateTime) {
         fetchJournalForDate(date)
     }
 
-    private fun fetchJournalForDate(date: LocalDate) {
+    private fun fetchJournalForDate(date: OffsetDateTime) {
         viewModelScope.launch {
-            val formattedDate = date.format(DateTimeFormatter.ISO_DATE)
-            when (val result = journalRepository.getEntriesByDate(formattedDate)) {
+            when (val result = journalRepository.getEntriesByDate(date)) {
                 is Resource.Success -> {
                     val entries = result.data?.entries ?: emptyList()
-                    val startDate = result.data?.startDate?.let {
-                        try {
-                            LocalDate.parse(it, DateTimeFormatter.ISO_DATE)
-                        } catch (e: Exception) {
-                            date
-                        }
-                    } ?: date
+                    val startDate = result.data?.startDate ?: date
                     _uiState.update { state ->
                         state.copy(
                             journalEntries = entries,
@@ -59,6 +57,7 @@ class DetailsViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is Resource.Error -> {
                     sendUiEvent(UiEvent.ShowMessage(result.message))
                     _uiState.update { state ->
@@ -80,9 +79,9 @@ class DetailsViewModel @Inject constructor(
 }
 
 data class DetailsUiState(
-    val startDate: LocalDate = LocalDate.now(),
-    val endDate: LocalDate = LocalDate.now(),
-    val selectedDate: LocalDate = LocalDate.now(),
+    val startDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val endDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val selectedDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val moodLabel: String = "",
     val journalEntries: List<JournalDetail> = emptyList()
 )

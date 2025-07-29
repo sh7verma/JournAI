@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +39,7 @@ import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.utils.UiEvent
+import com.shverma.app.utils.toIsoString
 import kotlinx.coroutines.flow.receiveAsFlow
 
 
@@ -48,6 +50,7 @@ fun HomeScreen(
     onClickEntry: (String) -> Unit,
     onStartWriting: () -> Unit
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(true) {
         viewModel.uiEvent.receiveAsFlow().collect { event ->
@@ -85,7 +88,7 @@ fun HomeScreen(
         // Header
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Good morning, ${state.userName}",
+            text = context.getString(R.string.good_morning, state.userName),
             style = AppTypography.titleLarge,
             color = JournAIBrown
         )
@@ -100,7 +103,7 @@ fun HomeScreen(
 
         // Today's Prompt
         PromptCard(
-            title = "💡 Today's Prompt",
+            title = context.getString(R.string.todays_prompt),
             content = state.prompt,
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,10 +168,9 @@ fun HomeScreen(
         } else {
             state.recentEntries.forEach { entry ->
                 JournalCard(
-                    date = entry.date,
-                    mood = entry.mood,
-                    contentPreview = entry.text, onClick = {
-                        onClickEntry(entry.date)
+                    entry = entry,
+                    onClick = {
+                        onClickEntry(it.toIsoString())
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))

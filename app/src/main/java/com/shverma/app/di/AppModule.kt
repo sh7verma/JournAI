@@ -4,8 +4,6 @@ import android.content.Context
 import com.shverma.app.data.preference.DataStoreHelper
 import com.shverma.app.data.repository.AuthRepository
 import com.shverma.app.data.repository.AuthRepositoryImpl
-import com.shverma.app.data.repository.HomeRepository
-import com.shverma.app.data.repository.HomeRepositoryImpl
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.data.repository.JournalRepositoryImpl
 import dagger.Binds
@@ -40,12 +38,6 @@ object DataModule {
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindHomeRepository(
-        homeRepositoryImpl: HomeRepositoryImpl
-    ): HomeRepository
 
     @Binds
     @Singleton

@@ -32,12 +32,81 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.shverma.app.data.network.model.JournalDetail
+import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
 import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.ui.theme.JournAIYellow
+import com.shverma.app.utils.formatWrittenAt
+import org.threeten.bp.OffsetDateTime
 
+// Helper function to map mood string to Mood enum
+private fun getMoodFromString(moodString: String): Mood? {
+    return Mood.entries.find { it.label.equals(moodString, ignoreCase = true) }
+}
+
+@Composable
+fun JournalCard(
+    entry: JournalDetail,
+    moodIcon: ImageVector? = null,
+    onClick: (OffsetDateTime) -> Unit = {}
+) {
+    // Try to map the mood string to a Mood enum
+    val mood = getMoodFromString(entry.mood)
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, JournAIBrown.copy(alpha = 0.2f)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick(entry.date) }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = formatWrittenAt(entry.date),
+                    style = AppTypography.bodyMedium,
+                    color = JournAIBrown
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = mood?.icon ?: moodIcon ?: Icons.Outlined.SentimentSatisfied,
+                        contentDescription = mood?.label ?: entry.mood,
+                        tint = JournAIBrown,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = mood?.label ?: entry.mood.ifBlank { "Okay" },
+                        style = AppTypography.labelLarge,
+                        color = JournAIBrown
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = entry.text.ifBlank { "No preview available." },
+                style = AppTypography.bodyLarge,
+                color = JournAIBrown,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+// Keeping the old function for backward compatibility
 @Composable
 fun JournalCard(
     date: String,
@@ -214,19 +283,15 @@ fun MoodSummaryCard(
     }
 }
 
-fun formatWrittenAt(createdAt: String?): String {
-    if (createdAt.isNullOrBlank() || !createdAt.contains("T")) return ""
-    return createdAt.substringAfter("T").substring(0, 5).let { "Written at $it" }
-}
-
 @Composable
 fun DetailedJournalCard(
     entry: JournalDetail,
-    moodIcon: ImageVector? = null,
-    moodLabel: String? = null,
     writtenAt: String? = null,
     onGetAiTips: (() -> Unit)? = null
 ) {
+    // Try to map the mood string to a Mood enum
+    val mood = getMoodFromString(entry.mood)
+
     Card(
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier
@@ -241,14 +306,14 @@ fun DetailedJournalCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
-                    imageVector = moodIcon ?: Icons.Outlined.SentimentSatisfied,
-                    contentDescription = moodLabel ?: "",
+                    imageVector = mood?.icon ?: Icons.Outlined.SentimentSatisfied,
+                    contentDescription = mood?.label  ?: "",
                     tint = JournAIBrown,
                     modifier = Modifier.size(22.dp)
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = entry.mood,
+                    text = mood?.label ?: entry.mood,
                     style = AppTypography.labelLarge,
                     color = JournAIBrown,
                     modifier = Modifier.weight(1f)

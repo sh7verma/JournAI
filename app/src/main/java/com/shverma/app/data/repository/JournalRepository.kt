@@ -7,16 +7,18 @@ import com.shverma.app.data.network.model.JournalEntryCreate
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.safeApiCall
 import kotlinx.coroutines.Dispatchers
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 
 interface JournalRepository {
     suspend fun createEntry(entry: JournalEntryCreate): Resource<JournalDetail>
-    suspend fun getEntry(date: String): Resource<JournalDetail>
+    suspend fun getEntry(id: String): Resource<JournalDetail>
     suspend fun getHistory(): Resource<List<JournalDetail>>
     suspend fun updateEntry(id: String, entry: JournalEntryCreate): Resource<JournalDetail>
     suspend fun deleteEntry(id: String): Resource<Unit>
-    suspend fun getEntriesByDate(date: String): Resource<JournalByDateResponse>
+    suspend fun getEntriesByDate(date: OffsetDateTime): Resource<JournalByDateResponse>
 }
 
 
@@ -62,10 +64,11 @@ class JournalRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getEntriesByDate(date: String): Resource<JournalByDateResponse> {
+    override suspend fun getEntriesByDate(date: OffsetDateTime): Resource<JournalByDateResponse> {
+        val dateStr = date.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
         return safeApiCall(
             dispatcher = Dispatchers.IO,
-            apiCall = { apiService.getJournalEntriesByDate(date) }
+            apiCall = { apiService.getJournalEntriesByDate(dateStr) }
         )
     }
 }

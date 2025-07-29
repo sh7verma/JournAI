@@ -8,16 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.SentimentSatisfied
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,20 +24,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shverma.androidstarter.R
 import com.shverma.app.ui.DetailedJournalCard
-import com.shverma.app.ui.JournButton
 import com.shverma.app.ui.customViews.CalendarWeekRow
 import com.shverma.app.ui.customViews.createMoodMap
 import com.shverma.app.ui.customViews.generateCalendarDays
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
-import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.utils.UiEvent
-import com.shverma.app.ui.formatWrittenAt
+import com.shverma.app.utils.formatWrittenAt
+import com.shverma.app.utils.toOffsetDateTime
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
@@ -53,10 +50,11 @@ fun DetailScreen(
     onGetAiTips: () -> Unit = {},
     detailsViewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>()
 ) {
+    val context = LocalContext.current
     val state by detailsViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(date) {
-        detailsViewModel.onDateSelected(org.threeten.bp.LocalDate.parse(date))
+        detailsViewModel.onDateSelected(date.toOffsetDateTime()!!)
     }
 
     LaunchedEffect(true) {
@@ -65,20 +63,22 @@ fun DetailScreen(
                 is UiEvent.ShowMessage -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
+
                 else -> Unit
             }
         }
     }
 
-    val startDate = state.startDate
-    val endDate = state.endDate
+    // Convert OffsetDateTime to LocalDate for use with CalendarWeekRow
+    val startDateLocal = state.startDate.toLocalDate()
+    val endDateLocal = state.endDate.toLocalDate()
 
-    val moodMap = createMoodMap(startDate, endDate)
+    val moodMap = createMoodMap(startDateLocal, endDateLocal)
 
-    val days = remember(startDate, endDate, moodMap) {
-        generateCalendarDays(startDate, endDate, moodMap)
+    val days = remember(startDateLocal, endDateLocal, moodMap) {
+        generateCalendarDays(startDateLocal, endDateLocal, moodMap)
     }
-    var selectedDate by remember { mutableStateOf(state.selectedDate) }
+    var selectedDateLocal by remember { mutableStateOf(state.selectedDate.toLocalDate()) }
 
     // --- Main Layout ---
     Column(
@@ -95,7 +95,7 @@ fun DetailScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "JournAI",
+                text = stringResource(R.string.app_name),
                 style = AppTypography.titleLarge,
                 color = JournAIBrown,
                 modifier = Modifier.weight(1f)
@@ -107,10 +107,10 @@ fun DetailScreen(
         // Calendar
         CalendarWeekRow(
             days = days,
-            selectedDate = selectedDate,
+            selectedDate = selectedDateLocal,
             specialDate = null,
             onDateSelected = {
-                selectedDate = it
+                selectedDateLocal = it
                 detailsViewModel.onDateSelected(it)
             }
         )
@@ -129,7 +129,7 @@ fun DetailScreen(
             ) {
                 Column(Modifier.padding(18.dp)) {
                     Text(
-                        text = "No entry for this date.",
+                        text = context.getString(R.string.no_entry_for_date),
                         style = AppTypography.bodyLarge,
                         color = Color.Gray
                     )
@@ -139,8 +139,6 @@ fun DetailScreen(
             state.journalEntries.forEach { entry ->
                 DetailedJournalCard(
                     entry = entry,
-                    moodIcon = moodMap[selectedDate]?.icon,
-                    moodLabel = moodMap[selectedDate]?.label,
                     writtenAt = formatWrittenAt(entry.created_at),
                     onGetAiTips = onGetAiTips
                 )

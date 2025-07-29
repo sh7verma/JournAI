@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
+import com.shverma.app.utils.toOffsetDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,8 +41,7 @@ class JournalsListViewModel @Inject constructor(
 
     private fun fetchEntriesForDate(date: LocalDate) {
         viewModelScope.launch {
-            val formattedDate = date.toString() // "yyyy-MM-dd"
-            when (val result = journalRepository.getEntriesByDate(formattedDate)) {
+            when (val result = journalRepository.getEntriesByDate(date.toOffsetDateTime())) {
                 is Resource.Success -> {
                     val response = result.data
                     _uiState.update { state ->
@@ -49,7 +49,7 @@ class JournalsListViewModel @Inject constructor(
                             journalEntries = response?.entries ?: emptyList(),
                             startDate = response?.startDate?.let {
                                 try {
-                                    LocalDate.parse(it, DateTimeFormatter.ISO_DATE).minusDays(30)
+                                    it.toLocalDate().minusDays(30)
                                 } catch (e: Exception) {
                                     state.startDate
                                 }

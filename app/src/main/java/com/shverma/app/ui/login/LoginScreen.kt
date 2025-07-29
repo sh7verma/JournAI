@@ -8,9 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.shverma.androidstarter.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -19,6 +22,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState = loginViewModel.uiState.collectAsStateWithLifecycle().value
 
     Box(
@@ -33,7 +37,7 @@ fun LoginScreen(
         ) {
             // App logo or name
             Text(
-                text = "JournAI",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -43,7 +47,7 @@ fun LoginScreen(
             TextField(
                 value = uiState.email,
                 onValueChange = { loginViewModel.onEmailChange(it) },
-                label = { Text("Email") },
+                label = { Text(context.getString(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -53,12 +57,18 @@ fun LoginScreen(
             TextField(
                 value = uiState.password,
                 onValueChange = { loginViewModel.onPasswordChange(it) },
-                label = { Text("Password") },
+                label = { Text(context.getString(R.string.password)) },
                 visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image = if (uiState.isPasswordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
                     IconButton(onClick = { loginViewModel.onTogglePasswordVisibility() }) {
-                        Icon(imageVector = image, contentDescription = if (uiState.isPasswordVisible) "Hide password" else "Show password")
+                        Icon(
+                            imageVector = image, 
+                            contentDescription = if (uiState.isPasswordVisible) 
+                                context.getString(R.string.hide_password) 
+                            else 
+                                context.getString(R.string.show_password)
+                        )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -83,7 +93,7 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Login")
+                    Text(context.getString(R.string.login))
                 }
             }
 
@@ -106,7 +116,7 @@ fun LoginScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Register")
+                    Text(context.getString(R.string.register))
                 }
             }
 

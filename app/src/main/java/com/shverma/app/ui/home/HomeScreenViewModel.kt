@@ -1,12 +1,12 @@
 package com.shverma.app.ui.home
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
+import com.shverma.app.utils.getCurrentDateFormatted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -62,23 +60,18 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     _uiState.update { state ->
                         state.copy(
-                            recentEntries = result.data ?: emptyList()
+                            recentEntries = (result.data ?: emptyList()).sortedByDescending { it.created_at }
                         )
                     }
                 }
 
                 is Resource.Error -> {
-                    sendUiEvent(UiEvent.ShowMessage(result.message ?: "Failed to load entries"))
+                    sendUiEvent(UiEvent.ShowMessage(result.message))
                 }
             }
         }
     }
 
-    @SuppressLint("NewApi")
-    private fun getCurrentDateFormatted(): String {
-        val formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
-        return LocalDate.now().format(formatter)
-    }
 
     fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {

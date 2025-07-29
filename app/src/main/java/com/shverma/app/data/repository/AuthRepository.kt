@@ -30,7 +30,6 @@ class AuthRepositoryImpl @Inject constructor(
                 tokenType = result.data.token_type,
                 userId = result.data.id,
                 userEmail = result.data.email,
-                userCreatedAt = result.data.created_at
             )
         }
         return result
@@ -47,7 +46,6 @@ class AuthRepositoryImpl @Inject constructor(
                 tokenType = result.data.token_type,
                 userId = result.data.id,
                 userEmail = result.data.email,
-                userCreatedAt = result.data.created_at
             )
         }
         return result

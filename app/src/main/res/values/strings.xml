@@ -18,11 +18,36 @@
     <!-- Retry CTA -->
     <string name="action_retry">Retry</string>
     <string name="action_ok">OK</string>
+
+    <!-- Home Screen -->
+    <string name="good_morning">Good morning, %1$s</string>
+    <string name="todays_prompt">💡 Today\'s Prompt</string>
     <string name="start_writing">Start Writing</string>
     <string name="voice_entry">Voice Entry</string>
     <string name="recent_entries">Recent Entries</string>
     <string name="day_streak">%1$d day streak!</string>
     <string name="no_entries_available">No entries available.</string>
+
+    <!-- Journal List Screen -->
     <string name="no_journal_entries_for_this_date">No journal entries for this date.</string>
+
+    <!-- Details Screen -->
+    <string name="no_entry_for_date">No entry for this date.</string>
+
+    <!-- Journal Entry Screen -->
+    <string name="todays_prompt_quote">❞ Today\'s Prompt</string>
+    <string name="reflect_on_day">Reflect on your day and how you felt.</string>
+    <string name="start_writing_hint">Start writing here…</string>
+    <string name="how_are_you_feeling">How are you feeling?</string>
+    <string name="edit">Edit</string>
+    <string name="save_entry">Save Entry</string>
+
+    <!-- Login Screen -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
 
 </resources>

@@ -32,11 +32,11 @@ import com.shverma.app.ui.DetailedJournalCard
 import com.shverma.app.ui.customViews.CalendarWeekRow
 import com.shverma.app.ui.customViews.createMoodMap
 import com.shverma.app.ui.customViews.generateCalendarDays
-import com.shverma.app.ui.formatWrittenAt
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.utils.UiEvent
+import com.shverma.app.utils.formatWrittenAt
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
@@ -82,7 +82,7 @@ fun JournalsListScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "JournAI",
+                text = stringResource(R.string.app_name),
                 style = AppTypography.titleLarge,
                 color = JournAIBrown,
                 modifier = Modifier.weight(1f)
@@ -123,8 +123,6 @@ fun JournalsListScreen(
             state.journalEntries.forEach { entry: JournalDetail ->
                 DetailedJournalCard(
                     entry = entry,
-                    moodIcon = moodMap[selectedDate]?.icon,
-                    moodLabel = moodMap[selectedDate]?.label,
                     writtenAt = formatWrittenAt(entry.created_at),
                     onGetAiTips = onGetAiTips
                 )

@@ -30,7 +30,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shverma.androidstarter.R
@@ -49,6 +51,7 @@ fun JournalEntryScreen(
     onBackClick: (() -> Unit),
     journalEntryViewModel: JournalEntryViewModel = hiltViewModel<JournalEntryViewModel>()
 ) {
+
     val uiState = journalEntryViewModel.uiState.collectAsState()
     val state = uiState.value
 
@@ -83,13 +86,13 @@ fun JournalEntryScreen(
         ) {
             Column(Modifier.padding(16.dp)) {
                 Text(
-                    text = "❞ Today's Prompt",
+                    text = stringResource(R.string.todays_prompt_quote),
                     style = AppTypography.labelLarge,
                     color = JournAIBrown
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Reflect on your day and how you felt.",
+                    text = stringResource(R.string.reflect_on_day),
                     style = AppTypography.bodyLarge,
                     color = JournAIBrown
                 )

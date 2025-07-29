@@ -22,7 +22,6 @@ class DataStoreHelper @Inject constructor(
         private val KEY_TOKEN_TYPE = stringPreferencesKey("token_type")
         private val KEY_USER_ID = stringPreferencesKey("user_id")
         private val KEY_USER_EMAIL = stringPreferencesKey("user_email")
-        private val KEY_USER_CREATED_AT = stringPreferencesKey("user_created_at")
     }
 
     suspend fun saveUserSession(
@@ -30,14 +29,12 @@ class DataStoreHelper @Inject constructor(
         tokenType: String,
         userId: String,
         userEmail: String,
-        userCreatedAt: String
     ) {
         context.dataStore.edit { prefs ->
             prefs[KEY_ACCESS_TOKEN] = accessToken
             prefs[KEY_TOKEN_TYPE] = tokenType
             prefs[KEY_USER_ID] = userId
             prefs[KEY_USER_EMAIL] = userEmail
-            prefs[KEY_USER_CREATED_AT] = userCreatedAt
         }
     }
 
@@ -45,7 +42,6 @@ class DataStoreHelper @Inject constructor(
     val tokenType: Flow<String?> = context.dataStore.data.map { it[KEY_TOKEN_TYPE] }
     val userId: Flow<String?> = context.dataStore.data.map { it[KEY_USER_ID] }
     val userEmail: Flow<String?> = context.dataStore.data.map { it[KEY_USER_EMAIL] }
-    val userCreatedAt: Flow<String?> = context.dataStore.data.map { it[KEY_USER_CREATED_AT] }
 
     suspend fun clearTokens() {
         context.dataStore.edit { prefs ->
@@ -53,7 +49,6 @@ class DataStoreHelper @Inject constructor(
             prefs.remove(KEY_TOKEN_TYPE)
             prefs.remove(KEY_USER_ID)
             prefs.remove(KEY_USER_EMAIL)
-            prefs.remove(KEY_USER_CREATED_AT)
         }
     }
 }
