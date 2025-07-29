@@ -3,6 +3,9 @@ package com.shverma.app.ui.home
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shverma.app.data.network.model.JournalDetail
+import com.shverma.app.data.repository.JournalRepository
+import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,11 +18,6 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
-data class JournalEntry(
-    val date: String,
-    val mood: String,
-    val preview: String
-)
 
 data class MoodSummary(
     val streak: Int,
@@ -30,13 +28,14 @@ data class HomeUiState(
     val userName: String = "",
     val currentDate: String = "",
     val prompt: String = "",
-    val recentEntries: List<JournalEntry> = emptyList(),
+    val recentEntries: List<JournalDetail> = emptyList(),
     val moodSummary: MoodSummary = MoodSummary(0, "")
 )
 
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val journalRepository: JournalRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -45,35 +44,33 @@ class HomeViewModel @Inject constructor(
     var uiEvent = Channel<UiEvent>()
         private set
 
-    init {
-        loadInitialData()
-    }
-
     fun refreshHomeScreen() {
-        loadInitialData()
-    }
-
-    fun onEvent(event: JournAIHomeEvents) {
-        when (event) {
-            is JournAIHomeEvents.StartWriting -> {
-                sendUiEvent(UiEvent.ShowMessage("Start Writing clicked"))
-            }
-
-            is JournAIHomeEvents.StartVoiceEntry -> {
-                sendUiEvent(UiEvent.ShowMessage("Voice Entry clicked"))
-            }
-        }
-    }
-
-    private fun loadInitialData() {
         _uiState.update { state ->
             state.copy(
                 userName = "Sarah",
                 currentDate = getCurrentDateFormatted(),
                 prompt = "What made you smile today?",
-                recentEntries = sampleRecentEntries(),
                 moodSummary = MoodSummary(5, "Mostly Positive")
             )
+        }
+        fetchJournalHistory()
+    }
+
+    private fun fetchJournalHistory() {
+        viewModelScope.launch {
+            when (val result = journalRepository.getHistory()) {
+                is Resource.Success -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            recentEntries = result.data ?: emptyList()
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    sendUiEvent(UiEvent.ShowMessage(result.message ?: "Failed to load entries"))
+                }
+            }
         }
     }
 
@@ -83,34 +80,9 @@ class HomeViewModel @Inject constructor(
         return LocalDate.now().format(formatter)
     }
 
-    private fun sampleRecentEntries(): List<JournalEntry> {
-        return listOf(
-            JournalEntry(
-                "Feb 22",
-                "😊 Positive",
-                "Today was a productive day at work. I managed to complete..."
-            ),
-            JournalEntry(
-                "Feb 21",
-                "😊 Happy",
-                "Had a wonderful coffee chat with Sarah this morning..."
-            ),
-            JournalEntry(
-                "Feb 20",
-                "😊 Grateful",
-                "Feeling grateful for the small moments today..."
-            )
-        )
-    }
-
     fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
             uiEvent.send(event)
         }
     }
-}
-
-sealed interface JournAIHomeEvents {
-    object StartWriting : JournAIHomeEvents
-    object StartVoiceEntry : JournAIHomeEvents
 }

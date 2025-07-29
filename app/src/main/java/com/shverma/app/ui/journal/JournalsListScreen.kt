@@ -1,4 +1,4 @@
-package com.shverma.app.ui.details
+package com.shverma.app.ui.journal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,63 +8,52 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.SentimentSatisfied
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.shverma.androidstarter.R
+import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.ui.DetailedJournalCard
-import com.shverma.app.ui.JournButton
 import com.shverma.app.ui.customViews.CalendarWeekRow
 import com.shverma.app.ui.customViews.createMoodMap
 import com.shverma.app.ui.customViews.generateCalendarDays
+import com.shverma.app.ui.formatWrittenAt
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
-import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.utils.UiEvent
-import com.shverma.app.ui.formatWrittenAt
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
-fun DetailScreen(
-    date: String,
+fun JournalsListScreen(
     snackBarHostState: SnackbarHostState,
-    onBackClick: () -> Unit,
     onGetAiTips: () -> Unit = {},
-    detailsViewModel: DetailsViewModel = hiltViewModel<DetailsViewModel>()
+    journalViewModel: JournalsListViewModel = hiltViewModel<JournalsListViewModel>()
 ) {
-    val state by detailsViewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(date) {
-        detailsViewModel.onDateSelected(org.threeten.bp.LocalDate.parse(date))
-    }
+    val state by journalViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
-        detailsViewModel.uiEvent.receiveAsFlow().collect { event ->
+        journalViewModel.uiEvent.receiveAsFlow().collect { event ->
             when (event) {
                 is UiEvent.ShowMessage -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
+
                 else -> Unit
             }
         }
@@ -72,15 +61,13 @@ fun DetailScreen(
 
     val startDate = state.startDate
     val endDate = state.endDate
+    val selectedDate = state.selectedDate
 
     val moodMap = createMoodMap(startDate, endDate)
-
     val days = remember(startDate, endDate, moodMap) {
         generateCalendarDays(startDate, endDate, moodMap)
     }
-    var selectedDate by remember { mutableStateOf(state.selectedDate) }
 
-    // --- Main Layout ---
     Column(
         modifier = Modifier
             .background(JournAIBackground)
@@ -109,15 +96,12 @@ fun DetailScreen(
             days = days,
             selectedDate = selectedDate,
             specialDate = null,
-            onDateSelected = {
-                selectedDate = it
-                detailsViewModel.onDateSelected(it)
-            }
+            onDateSelected = { journalViewModel.onDateSelected(it) }
         )
 
         Spacer(Modifier.height(20.dp))
 
-        // Multiple Journal Entry Cards
+        // Journal Entries for selected date
         if (state.journalEntries.isEmpty()) {
             Card(
                 shape = RoundedCornerShape(18.dp),
@@ -129,14 +113,14 @@ fun DetailScreen(
             ) {
                 Column(Modifier.padding(18.dp)) {
                     Text(
-                        text = "No entry for this date.",
+                        text = stringResource(R.string.no_journal_entries_for_this_date),
                         style = AppTypography.bodyLarge,
                         color = Color.Gray
                     )
                 }
             }
         } else {
-            state.journalEntries.forEach { entry ->
+            state.journalEntries.forEach { entry: JournalDetail ->
                 DetailedJournalCard(
                     entry = entry,
                     moodIcon = moodMap[selectedDate]?.icon,

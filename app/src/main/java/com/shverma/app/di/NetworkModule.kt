@@ -1,11 +1,16 @@
 package com.shverma.app.di
 
 import com.shverma.app.data.network.ApiService
+import com.shverma.app.data.preference.DataStoreHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,15 +22,27 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://jsonplaceholder.typicode.com/" // replace with your url
+    private const val BASE_URL = "https://fluffy-guide-j4pqqwv69p424v-8000.app.github.dev/"
 
     @Provides
     @Singleton
-    fun provideCacheOkHttpClient(): OkHttpClient =
+    fun provideAuthInterceptor(
+        dataStoreHelper: DataStoreHelper
+    ): AuthInterceptor = AuthInterceptor(
+        getToken = { runBlocking { dataStoreHelper.accessToken.firstOrNull() } },
+        getTokenType = { runBlocking { dataStoreHelper.tokenType.firstOrNull() } }
+    )
+
+    @Provides
+    @Singleton
+    fun provideCacheOkHttpClient(
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(2, TimeUnit.MINUTES)
             .writeTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(authInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -44,4 +61,25 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
+}
+
+
+class AuthInterceptor(
+    private val getToken: () -> String?,
+    private val getTokenType: () -> String?
+) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val token = getToken()
+        val tokenType = getTokenType()
+
+        return if (!token.isNullOrBlank() && !tokenType.isNullOrBlank()) {
+            val authenticatedRequest = request.newBuilder()
+                .addHeader("Authorization", "$tokenType $token")
+                .build()
+            chain.proceed(authenticatedRequest)
+        } else {
+            chain.proceed(request)
+        }
+    }
 }

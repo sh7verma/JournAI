@@ -2,6 +2,7 @@ package com.shverma.app
 
 import android.app.Application
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.shverma.app.utils.GlobalResourceProvider
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -11,5 +12,6 @@ class App : Application(){
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+        GlobalResourceProvider.init(this)
     }
 }

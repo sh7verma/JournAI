@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.outlined.SentimentSatisfied
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -26,19 +27,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
+import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.ui.theme.JournAIYellow
 
 @Composable
 fun JournalCard(
     date: String,
     mood: String,
-    contentPreview: String
+    contentPreview: String,
+    onClick: (String) -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -48,12 +53,14 @@ fun JournalCard(
         ),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick(date) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = date,
@@ -61,14 +68,14 @@ fun JournalCard(
                     color = JournAIBrown
                 )
                 Text(
-                    text = mood,
+                    text = mood.ifBlank { "Okay" },
                     style = AppTypography.labelLarge,
                     color = JournAIBrown
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = contentPreview,
+                text = contentPreview.ifBlank { "No preview available." },
                 style = AppTypography.bodyLarge,
                 color = JournAIBrown,
                 maxLines = 2,
@@ -207,3 +214,70 @@ fun MoodSummaryCard(
     }
 }
 
+fun formatWrittenAt(createdAt: String?): String {
+    if (createdAt.isNullOrBlank() || !createdAt.contains("T")) return ""
+    return createdAt.substringAfter("T").substring(0, 5).let { "Written at $it" }
+}
+
+@Composable
+fun DetailedJournalCard(
+    entry: JournalDetail,
+    moodIcon: ImageVector? = null,
+    moodLabel: String? = null,
+    writtenAt: String? = null,
+    onGetAiTips: (() -> Unit)? = null
+) {
+    Card(
+        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 2.dp, bottom = 12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(Modifier.padding(18.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = moodIcon ?: Icons.Outlined.SentimentSatisfied,
+                    contentDescription = moodLabel ?: "",
+                    tint = JournAIBrown,
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = entry.mood,
+                    style = AppTypography.labelLarge,
+                    color = JournAIBrown,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = writtenAt ?: formatWrittenAt(entry.created_at),
+                    style = AppTypography.bodyMedium,
+                    color = JournAIBrown
+                )
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = entry.text,
+                style = AppTypography.bodyLarge,
+                color = JournAIBrown
+            )
+
+            if (onGetAiTips != null) {
+                Spacer(Modifier.height(16.dp))
+                JournButton(
+                    text = "Get AI Writing Tips",
+                    iconResId = com.shverma.androidstarter.R.drawable.ic_bulb,
+                    backgroundColor = JournAIPink,
+                    contentColor = JournAIBrown,
+                    onClick = onGetAiTips
+                )
+            }
+        }
+    }
+}

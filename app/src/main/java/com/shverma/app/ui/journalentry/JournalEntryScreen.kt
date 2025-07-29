@@ -22,33 +22,49 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.shverma.androidstarter.R
 import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
+import com.shverma.app.utils.UiEvent
+import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
 fun JournalEntryScreen(
     modifier: Modifier = Modifier,
-    journalEntryViewModel: JournalEntryViewModel = viewModel()
+    snackBarHostState: SnackbarHostState,
+    onBackClick: (() -> Unit),
+    journalEntryViewModel: JournalEntryViewModel = hiltViewModel<JournalEntryViewModel>()
 ) {
-    val uiState = journalEntryViewModel.uiState
-    var text by remember { mutableStateOf(uiState.value.entryText) }
-    var selectedMood by remember { mutableStateOf(uiState.value.selectedMood) }
+    val uiState = journalEntryViewModel.uiState.collectAsState()
+    val state = uiState.value
+
+    LaunchedEffect(true) {
+        journalEntryViewModel.uiEvent.receiveAsFlow().collect { event ->
+            when (event) {
+                is UiEvent.ShowMessage -> {
+                    snackBarHostState.showSnackbar(event.message)
+                }
+
+                is UiEvent.NavigateUp<*> -> {
+                    onBackClick()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -90,13 +106,13 @@ fun JournalEntryScreen(
         ) {
             Box(Modifier.padding(20.dp)) {
                 BasicTextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = state.entryText,
+                    onValueChange = { journalEntryViewModel.onTextChange(it) },
                     modifier = Modifier
                         .fillMaxSize(),
                     textStyle = AppTypography.bodyLarge.copy(color = JournAIBrown),
                     decorationBox = { innerTextField ->
-                        if (text.isEmpty()) {
+                        if (state.entryText.isEmpty()) {
                             Text(
                                 text = "Start writing here...",
                                 style = AppTypography.bodyLarge.copy(color = JournAIBrown.copy(alpha = 0.5f))
@@ -131,12 +147,16 @@ fun JournalEntryScreen(
                     Mood.entries.forEach { mood ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { selectedMood = mood }
+                            modifier = Modifier.clickable {
+                                journalEntryViewModel.onMoodSelected(
+                                    mood
+                                )
+                            }
                         ) {
                             Icon(
                                 imageVector = mood.icon,
                                 contentDescription = mood.label,
-                                tint = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(
+                                tint = if (state.selectedMood == mood) JournAIBrown else JournAIBrown.copy(
                                     alpha = 0.5f
                                 ),
                                 modifier = Modifier.size(32.dp)
@@ -144,7 +164,7 @@ fun JournalEntryScreen(
                             Text(
                                 text = mood.label,
                                 style = AppTypography.bodyMedium,
-                                color = if (selectedMood == mood) JournAIBrown else JournAIBrown.copy(
+                                color = if (state.selectedMood == mood) JournAIBrown else JournAIBrown.copy(
                                     alpha = 0.5f
                                 )
                             )
@@ -178,10 +198,7 @@ fun JournalEntryScreen(
             }
 
             Button(
-                onClick = {
-                    if (text.isNotBlank()) {
-                    }/*onSave(text, selectedMood!!)*/
-                },
+                onClick = { journalEntryViewModel.createJournalEntry() },
                 shape = RoundedCornerShape(32.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = JournAIBrown,

@@ -18,12 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -47,7 +45,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     snackBarHostState: SnackbarHostState,
-    onClickEntry: (Int) -> Unit,
+    onClickEntry: (String) -> Unit,
     onStartWriting: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,6 +55,7 @@ fun HomeScreen(
                 is UiEvent.ShowMessage -> {
                     snackBarHostState.showSnackbar(event.message)
                 }
+
                 else -> Unit
             }
         }
@@ -116,7 +115,7 @@ fun HomeScreen(
         ) {
             // Start Writing
             JournButton(
-                text = "Start Writing",
+                text = stringResource(R.string.start_writing),
                 iconResId = R.drawable.ic_write,
                 backgroundColor = JournAIBrown,
                 contentColor = Color.White,
@@ -126,20 +125,31 @@ fun HomeScreen(
 
             // Voice Entry
             JournButton(
-                text = "Voice Entry",
+                text = stringResource(R.string.voice_entry),
                 iconResId = R.drawable.ic_record,
                 backgroundColor = JournAIPink,
                 contentColor = JournAIBrown,
                 modifier = Modifier.weight(1f),
-                onClick = { onClickEntry(1) }
+                onClick = { onStartWriting() }
             )
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Weekly Mood Summary Card
+        MoodSummaryCard(
+            streakText = stringResource(R.string.day_streak, state.moodSummary.streak),
+            trendText = state.moodSummary.trend,
+            onClick = {
+                // Optional → navigate to detailed mood summary screen
+            }
+        )
 
         Spacer(modifier = Modifier.height(28.dp))
 
         // Recent Entries
         Text(
-            text = "Recent Entries",
+            text = stringResource(R.string.recent_entries),
             style = AppTypography.titleMedium,
             color = JournAIBrown
         )
@@ -147,7 +157,7 @@ fun HomeScreen(
 
         if (state.recentEntries.isEmpty()) {
             Text(
-                text = "No entries available.",
+                text = stringResource(R.string.no_entries_available),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -157,22 +167,13 @@ fun HomeScreen(
                 JournalCard(
                     date = entry.date,
                     mood = entry.mood,
-                    contentPreview = entry.preview,
+                    contentPreview = entry.text, onClick = {
+                        onClickEntry(entry.date)
+                    }
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Weekly Mood Summary Card
-        MoodSummaryCard(
-            streakText = "${state.moodSummary.streak} day streak!",
-            trendText = state.moodSummary.trend,
-            onClick = {
-                // Optional → navigate to detailed mood summary screen
-            }
-        )
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

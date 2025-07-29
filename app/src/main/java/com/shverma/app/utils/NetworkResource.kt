@@ -11,10 +11,13 @@ import retrofit2.Response
 import java.io.IOException
 
 
+data class ErrorDetail(
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String
+)
 
 data class ErrorResponse(
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
+    @SerializedName("detail") val detail: ErrorDetail?
 )
 
 sealed class Resource<T> {
@@ -42,24 +45,16 @@ suspend fun <T : Any> safeApiCall(
 private suspend fun <T : Any> handleApiResponse(
     response: Response<T>
 ): Resource<T> {
-    val apiName = response.raw().request.url.encodedPath
     return when (response.code()) {
         200, 201 -> {
             response.body()?.let {
                 Resource.Success(it)
             } ?: run {
-                Resource.Error(getGlobalString(R.string.error_not_found))
+                handleBadRequest(response)
             }
         }
 
-        401 -> {
-            Resource.Error(
-                message = getGlobalString(R.string.error_unauthorized),
-                errorCode = response.code().toString()
-            )
-        }
-
-        400 -> {
+        401, 400 -> {
             handleBadRequest(response)
         }
 
@@ -72,8 +67,17 @@ private suspend fun <T : Any> handleApiResponse(
 private fun <T : Any> handleBadRequest(response: Response<T>): Resource<T> {
     val errorBody = response.errorBody()?.string()
     return if (!errorBody.isNullOrEmpty()) {
-        val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-        Resource.Error(message = errorResponse.message, errorCode = errorResponse.code)
+        try {
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            val detail = errorResponse.detail
+            if (detail != null) {
+                Resource.Error(message = detail.message, errorCode = detail.code)
+            } else {
+                Resource.Error("${response.code()} ${getGlobalString(R.string.error_unknown)}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("${response.code()} ${getGlobalString(R.string.error_unknown)}")
+        }
     } else {
         Resource.Error("${response.code()} ${getGlobalString(R.string.error_unknown)}")
     }
@@ -82,7 +86,7 @@ private fun <T : Any> handleBadRequest(response: Response<T>): Resource<T> {
 private fun getErrorMessage(e: Exception): String {
     return when (e) {
         is IOException -> "${getGlobalString(R.string.error_no_internet)} ${e.message}"
-        else -> "${getGlobalString(R.string.error_no_internet)} ${e.message}"
+        else -> "${e.message}"
     }
 }
 

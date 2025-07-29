@@ -1,4 +1,4 @@
-package com.shverma.app.ui.details
+package com.shverma.app.ui.journal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +18,7 @@ import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsViewModel @Inject constructor(
+class JournalsListViewModel @Inject constructor(
     private val journalRepository: JournalRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
@@ -30,43 +30,37 @@ class DetailsViewModel @Inject constructor(
         private set
 
     init {
-        fetchJournalForDate(LocalDate.now())
+        fetchEntriesForDate(LocalDate.now())
     }
 
     fun onDateSelected(date: LocalDate) {
         _uiState.update { it.copy(selectedDate = date) }
-        fetchJournalForDate(date)
+        fetchEntriesForDate(date)
     }
 
-    private fun fetchJournalForDate(date: LocalDate) {
+    private fun fetchEntriesForDate(date: LocalDate) {
         viewModelScope.launch {
-            val formattedDate = date.format(DateTimeFormatter.ISO_DATE)
+            val formattedDate = date.toString() // "yyyy-MM-dd"
             when (val result = journalRepository.getEntriesByDate(formattedDate)) {
                 is Resource.Success -> {
-                    val entries = result.data?.entries ?: emptyList()
-                    val startDate = result.data?.startDate?.let {
-                        try {
-                            LocalDate.parse(it, DateTimeFormatter.ISO_DATE)
-                        } catch (e: Exception) {
-                            date
-                        }
-                    } ?: date
+                    val response = result.data
                     _uiState.update { state ->
                         state.copy(
-                            journalEntries = entries,
-                            selectedDate = date,
-                            startDate = startDate
+                            journalEntries = response?.entries ?: emptyList(),
+                            startDate = response?.startDate?.let {
+                                try {
+                                    LocalDate.parse(it, DateTimeFormatter.ISO_DATE).minusDays(30)
+                                } catch (e: Exception) {
+                                    state.startDate
+                                }
+                            } ?: state.startDate
                         )
                     }
                 }
+
                 is Resource.Error -> {
                     sendUiEvent(UiEvent.ShowMessage(result.message))
-                    _uiState.update { state ->
-                        state.copy(
-                            journalEntries = emptyList(),
-                            selectedDate = date
-                        )
-                    }
+                    _uiState.update { state -> state.copy(journalEntries = emptyList()) }
                 }
             }
         }

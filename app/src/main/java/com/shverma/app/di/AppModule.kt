@@ -2,8 +2,12 @@ package com.shverma.app.di
 
 import android.content.Context
 import com.shverma.app.data.preference.DataStoreHelper
+import com.shverma.app.data.repository.AuthRepository
+import com.shverma.app.data.repository.AuthRepositoryImpl
 import com.shverma.app.data.repository.HomeRepository
 import com.shverma.app.data.repository.HomeRepositoryImpl
+import com.shverma.app.data.repository.JournalRepository
+import com.shverma.app.data.repository.JournalRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -42,4 +46,16 @@ abstract class AppModule {
     abstract fun bindHomeRepository(
         homeRepositoryImpl: HomeRepositoryImpl
     ): HomeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJournalRepository(
+        journalRepositoryImpl: JournalRepositoryImpl
+    ): JournalRepository
 }

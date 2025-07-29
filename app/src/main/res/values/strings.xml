@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidStarter</string>
+    <string name="app_name">JournAI</string>
 
     <!-- Generic Errors -->
     <string name="error_unknown">Something went wrong. Please try again.</string>
@@ -18,5 +18,11 @@
     <!-- Retry CTA -->
     <string name="action_retry">Retry</string>
     <string name="action_ok">OK</string>
+    <string name="start_writing">Start Writing</string>
+    <string name="voice_entry">Voice Entry</string>
+    <string name="recent_entries">Recent Entries</string>
+    <string name="day_streak">%1$d day streak!</string>
+    <string name="no_entries_available">No entries available.</string>
+    <string name="no_journal_entries_for_this_date">No journal entries for this date.</string>
 
 </resources>
