@@ -13,10 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
-import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,13 +46,7 @@ class JournalsListViewModel @Inject constructor(
                     _uiState.update { state ->
                         state.copy(
                             journalEntries = response?.entries ?: emptyList(),
-                            startDate = response?.startDate?.let {
-                                try {
-                                    it.minusDays(30)
-                                } catch (e: Exception) {
-                                    state.startDate
-                                }
-                            } ?: state.startDate
+                            startDate = response?.startDate ?: date,
                         )
                     }
                 }

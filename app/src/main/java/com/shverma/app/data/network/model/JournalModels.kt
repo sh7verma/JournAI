@@ -11,7 +11,6 @@ data class JournalDetail(
     val id: String,
     val text: String,
     val mood: String,
-    val date: OffsetDateTime,
     val ai_sentiment: String?,
     val created_at: OffsetDateTime,
     val updated_at: OffsetDateTime

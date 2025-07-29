@@ -36,7 +36,6 @@ import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.utils.UiEvent
-import com.shverma.app.utils.formatWrittenAt
 import kotlinx.coroutines.flow.receiveAsFlow
 
 @Composable
@@ -95,7 +94,6 @@ fun JournalsListScreen(
         CalendarWeekRow(
             days = days,
             selectedDate = selectedDate,
-            specialDate = null,
             onDateSelected = { journalViewModel.onDateSelected(it) }
         )
 

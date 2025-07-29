@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,7 +48,6 @@ private fun getMoodFromString(moodString: String): Mood? {
 @Composable
 fun JournalCard(
     entry: JournalDetail,
-    moodIcon: ImageVector? = null,
     onClick: (OffsetDateTime) -> Unit = {}
 ) {
     // Try to map the mood string to a Mood enum
@@ -63,7 +61,7 @@ fun JournalCard(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(entry.date) }
+            .clickable { onClick(entry.created_at) }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -73,7 +71,7 @@ fun JournalCard(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = formatWrittenAt(entry.date),
+                    text = formatWrittenAt(entry.created_at),
                     style = AppTypography.bodyMedium,
                     color = JournAIBrown
                 )
@@ -81,7 +79,7 @@ fun JournalCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = mood?.icon ?: moodIcon ?: Icons.Outlined.SentimentSatisfied,
+                        imageVector = mood?.icon ?: Icons.Outlined.SentimentSatisfied,
                         contentDescription = mood?.label ?: entry.mood,
                         tint = JournAIBrown,
                         modifier = Modifier.size(18.dp)
