@@ -6,7 +6,6 @@ import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
-import com.shverma.app.utils.toOffsetDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
@@ -31,15 +29,8 @@ class DetailsViewModel @Inject constructor(
     var uiEvent = Channel<UiEvent>()
         private set
 
-    init {
-        fetchJournalForDate(OffsetDateTime.now(ZoneOffset.UTC))
-    }
-
-    fun onDateSelected(date: LocalDate) {
-        onDateSelected(date.toOffsetDateTime())
-    }
-
     fun onDateSelected(date: OffsetDateTime) {
+        _uiState.update { it.copy(selectedDate = date) }
         fetchJournalForDate(date)
     }
 
@@ -81,7 +72,7 @@ class DetailsViewModel @Inject constructor(
 data class DetailsUiState(
     val startDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val endDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
-    val selectedDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val selectedDate: OffsetDateTime? = null,
     val moodLabel: String = "",
     val journalEntries: List<JournalDetail> = emptyList()
 )

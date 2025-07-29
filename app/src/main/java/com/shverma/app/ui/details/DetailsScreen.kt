@@ -18,9 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +36,6 @@ import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.utils.UiEvent
-import com.shverma.app.utils.formatWrittenAt
 import com.shverma.app.utils.toOffsetDateTime
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -54,7 +51,7 @@ fun DetailScreen(
     val state by detailsViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(date) {
-        detailsViewModel.onDateSelected(date.toOffsetDateTime()!!)
+        detailsViewModel.onDateSelected(date.toOffsetDateTime())
     }
 
     LaunchedEffect(true) {
@@ -69,17 +66,15 @@ fun DetailScreen(
         }
     }
 
-    // Convert OffsetDateTime to LocalDate for use with CalendarWeekRow
-    val startDateLocal = state.startDate.toLocalDate()
-    val endDateLocal = state.endDate.toLocalDate()
+    // Use OffsetDateTime directly with CalendarWeekRow
+    val startDate = state.startDate
+    val endDate = state.endDate
 
-    val moodMap = createMoodMap(startDateLocal, endDateLocal)
+    val moodMap = createMoodMap(startDate, endDate)
 
-    val days = remember(startDateLocal, endDateLocal, moodMap) {
-        generateCalendarDays(startDateLocal, endDateLocal, moodMap)
+    val days = remember(startDate, endDate, moodMap) {
+        generateCalendarDays(startDate, endDate, moodMap)
     }
-    var selectedDateLocal by remember { mutableStateOf(state.selectedDate.toLocalDate()) }
-
     // --- Main Layout ---
     Column(
         modifier = Modifier
@@ -107,10 +102,8 @@ fun DetailScreen(
         // Calendar
         CalendarWeekRow(
             days = days,
-            selectedDate = selectedDateLocal,
-            specialDate = null,
+            selectedDate = state.selectedDate ?: startDate,
             onDateSelected = {
-                selectedDateLocal = it
                 detailsViewModel.onDateSelected(it)
             }
         )
@@ -139,7 +132,6 @@ fun DetailScreen(
             state.journalEntries.forEach { entry ->
                 DetailedJournalCard(
                     entry = entry,
-                    writtenAt = formatWrittenAt(entry.created_at),
                     onGetAiTips = onGetAiTips
                 )
             }

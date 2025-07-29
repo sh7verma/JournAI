@@ -14,8 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import org.threeten.bp.format.DateTimeFormatter
-import com.shverma.app.utils.toOffsetDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,17 +32,17 @@ class JournalsListViewModel @Inject constructor(
         private set
 
     init {
-        fetchEntriesForDate(LocalDate.now())
+        fetchEntriesForDate(OffsetDateTime.now(ZoneOffset.UTC))
     }
 
-    fun onDateSelected(date: LocalDate) {
+    fun onDateSelected(date: OffsetDateTime) {
         _uiState.update { it.copy(selectedDate = date) }
         fetchEntriesForDate(date)
     }
 
-    private fun fetchEntriesForDate(date: LocalDate) {
+    private fun fetchEntriesForDate(date: OffsetDateTime) {
         viewModelScope.launch {
-            when (val result = journalRepository.getEntriesByDate(date.toOffsetDateTime())) {
+            when (val result = journalRepository.getEntriesByDate(date)) {
                 is Resource.Success -> {
                     val response = result.data
                     _uiState.update { state ->
@@ -49,7 +50,7 @@ class JournalsListViewModel @Inject constructor(
                             journalEntries = response?.entries ?: emptyList(),
                             startDate = response?.startDate?.let {
                                 try {
-                                    it.toLocalDate().minusDays(30)
+                                    it.minusDays(30)
                                 } catch (e: Exception) {
                                     state.startDate
                                 }
@@ -74,9 +75,9 @@ class JournalsListViewModel @Inject constructor(
 }
 
 data class DetailsUiState(
-    val startDate: LocalDate = LocalDate.now(),
-    val endDate: LocalDate = LocalDate.now(),
-    val selectedDate: LocalDate = LocalDate.now(),
+    val startDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val endDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
+    val selectedDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val moodLabel: String = "",
     val journalEntries: List<JournalDetail> = emptyList()
 )

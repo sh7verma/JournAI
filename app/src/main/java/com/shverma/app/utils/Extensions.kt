@@ -34,11 +34,12 @@ fun OffsetDateTime.toIsoString(): String {
  * Parse an ISO-8601 formatted string to an OffsetDateTime
  * Used for API communication and passing data between screens
  */
-fun String.toOffsetDateTime(): OffsetDateTime? {
+fun String.toOffsetDateTime(): OffsetDateTime {
     return try {
         OffsetDateTime.parse(this, isoOffsetDateTimeFormatter)
     } catch (e: Exception) {
-        null
+        e.printStackTrace()
+        OffsetDateTime.now(ZoneOffset.UTC)
     }
 }
 

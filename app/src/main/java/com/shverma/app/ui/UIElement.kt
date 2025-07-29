@@ -106,54 +106,6 @@ fun JournalCard(
     }
 }
 
-// Keeping the old function for backward compatibility
-@Composable
-fun JournalCard(
-    date: String,
-    mood: String,
-    contentPreview: String,
-    onClick: (String) -> Unit = {}
-) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, JournAIBrown.copy(alpha = 0.2f)),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick(date) }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = date,
-                    style = AppTypography.bodyMedium,
-                    color = JournAIBrown
-                )
-                Text(
-                    text = mood.ifBlank { "Okay" },
-                    style = AppTypography.labelLarge,
-                    color = JournAIBrown
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = contentPreview.ifBlank { "No preview available." },
-                style = AppTypography.bodyLarge,
-                color = JournAIBrown,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
 @Composable
 fun JournButton(
     text: String,
@@ -286,7 +238,6 @@ fun MoodSummaryCard(
 @Composable
 fun DetailedJournalCard(
     entry: JournalDetail,
-    writtenAt: String? = null,
     onGetAiTips: (() -> Unit)? = null
 ) {
     // Try to map the mood string to a Mood enum
@@ -307,7 +258,7 @@ fun DetailedJournalCard(
             ) {
                 Icon(
                     imageVector = mood?.icon ?: Icons.Outlined.SentimentSatisfied,
-                    contentDescription = mood?.label  ?: "",
+                    contentDescription = mood?.label ?: "",
                     tint = JournAIBrown,
                     modifier = Modifier.size(22.dp)
                 )
@@ -319,7 +270,7 @@ fun DetailedJournalCard(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = writtenAt ?: formatWrittenAt(entry.created_at),
+                    text = formatWrittenAt(entry.created_at),
                     style = AppTypography.bodyMedium,
                     color = JournAIBrown
                 )

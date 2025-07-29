@@ -41,10 +41,12 @@ import androidx.compose.ui.unit.dp
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
 import org.threeten.bp.LocalDate
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
 // ----- Data Model -----
 data class CalendarDayUi(
-    val date: LocalDate,
+    val date: OffsetDateTime,
     val moodIcon: ImageVector?,
     val moodLabel: String
 )
@@ -58,9 +60,9 @@ enum class Mood(val label: String, val icon: ImageVector) {
 
 // ----- Helper Function -----
 fun generateCalendarDays(
-    startDate: LocalDate,
-    endDate: LocalDate,
-    moodMap: Map<LocalDate, Mood?>
+    startDate: OffsetDateTime,
+    endDate: OffsetDateTime,
+    moodMap: Map<OffsetDateTime, Mood?>
 ): List<CalendarDayUi> {
     val days = mutableListOf<CalendarDayUi>()
     var current = startDate
@@ -78,14 +80,32 @@ fun generateCalendarDays(
     return days
 }
 
+// Overloaded function for backward compatibility
+fun generateCalendarDays(
+    startDate: LocalDate,
+    endDate: LocalDate,
+    moodMap: Map<LocalDate, Mood?>
+): List<CalendarDayUi> {
+    // Convert LocalDate to OffsetDateTime
+    val startDateOffset = startDate.atStartOfDay().toInstant(ZoneOffset.UTC).atOffset(ZoneOffset.UTC)
+    val endDateOffset = endDate.atStartOfDay().toInstant(ZoneOffset.UTC).atOffset(ZoneOffset.UTC)
+
+    // Convert mood map keys from LocalDate to OffsetDateTime
+    val offsetMoodMap = moodMap.mapKeys { (localDate, _) ->
+        localDate.atStartOfDay().toInstant(ZoneOffset.UTC).atOffset(ZoneOffset.UTC)
+    }
+
+    return generateCalendarDays(startDateOffset, endDateOffset, offsetMoodMap)
+}
+
 // ----- The Calendar Row Composable -----
 @Composable
 fun CalendarWeekRow(
     days: List<CalendarDayUi>,
-    selectedDate: LocalDate,
-    specialDate: LocalDate? = null,
+    selectedDate: OffsetDateTime,
+    specialDate: OffsetDateTime? = null,
     modifier: Modifier = Modifier,
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (OffsetDateTime) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -94,8 +114,8 @@ fun CalendarWeekRow(
             .fillMaxSize()
     ) {
         days.forEach { day ->
-            val isSelected = day.date == selectedDate
-            val isSpecial = specialDate != null && day.date == specialDate
+            val isSelected = day.date.toLocalDate() == selectedDate.toLocalDate()
+            val isSpecial = specialDate != null && day.date.toLocalDate() == specialDate.toLocalDate()
             Box(
                 modifier = Modifier
                     .padding(end = 12.dp)
@@ -161,6 +181,16 @@ fun CalendarWeekRow(
     }
 }
 
+fun createMoodMap(startDate: OffsetDateTime, endDate: OffsetDateTime): Map<OffsetDateTime, Mood> {
+    val moods = listOf(Mood.Great, Mood.Good, Mood.Sad, Mood.Down)
+    val daysCount = startDate.toLocalDate().toEpochDay() - endDate.toLocalDate().toEpochDay() + 1
+    return (0 until daysCount.toInt()).associate { i ->
+        val date = startDate.minusDays(i.toLong())
+        date to moods[i % moods.size]
+    }
+}
+
+// Overloaded function for backward compatibility
 fun createMoodMap(startDate: LocalDate, endDate: LocalDate): Map<LocalDate, Mood> {
     val moods = listOf(Mood.Great, Mood.Good, Mood.Sad, Mood.Down)
     val daysCount = startDate.toEpochDay() - endDate.toEpochDay() + 1
@@ -173,17 +203,17 @@ fun createMoodMap(startDate: LocalDate, endDate: LocalDate): Map<LocalDate, Mood
 @Composable
 @Preview(showBackground = true)
 fun CalendarWeekRowPreview() {
-    val startDate = LocalDate.of(2024, 2, 25)
-    val endDate = LocalDate.of(2024, 2, 28)
+    val startDate = OffsetDateTime.of(2024, 2, 25, 0, 0, 0, 0, ZoneOffset.UTC)
+    val endDate = OffsetDateTime.of(2024, 2, 28, 0, 0, 0, 0, ZoneOffset.UTC)
     val moodMap = mapOf(
-        LocalDate.of(2024, 2, 28) to Mood.Great,
-        LocalDate.of(2024, 2, 27) to Mood.Good,
-        LocalDate.of(2024, 2, 26) to Mood.Sad
+        OffsetDateTime.of(2024, 2, 28, 0, 0, 0, 0, ZoneOffset.UTC) to Mood.Great,
+        OffsetDateTime.of(2024, 2, 27, 0, 0, 0, 0, ZoneOffset.UTC) to Mood.Good,
+        OffsetDateTime.of(2024, 2, 26, 0, 0, 0, 0, ZoneOffset.UTC) to Mood.Sad
     )
     val days = generateCalendarDays(startDate, endDate, moodMap)
 
-    var selectedDate by remember { mutableStateOf(LocalDate.of(2024, 2, 28)) }
-    var specialDate by remember { mutableStateOf(LocalDate.of(2024, 2, 26)) } // ring on 26
+    var selectedDate by remember { mutableStateOf(OffsetDateTime.of(2024, 2, 28, 0, 0, 0, 0, ZoneOffset.UTC)) }
+    var specialDate by remember { mutableStateOf(OffsetDateTime.of(2024, 2, 26, 0, 0, 0, 0, ZoneOffset.UTC)) } // ring on 26
 
     Column(Modifier.background(Color(0xFFFFF8F6))) {
         CalendarWeekRow(

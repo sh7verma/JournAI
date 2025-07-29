@@ -123,7 +123,6 @@ fun JournalsListScreen(
             state.journalEntries.forEach { entry: JournalDetail ->
                 DetailedJournalCard(
                     entry = entry,
-                    writtenAt = formatWrittenAt(entry.created_at),
                     onGetAiTips = onGetAiTips
                 )
             }
