@@ -67,5 +67,9 @@
     <string name="grammar_correction">Grammar Correction:</string>
     <string name="get_ai_writing_tips">Get AI Writing Tips</string>
     <string name="get_grammar_correction">Get Grammar Correction</string>
+    <string name="analyze_mood">Analyze Mood</string>
+    <string name="mood_analysis">Mood Analysis:</string>
+    <string name="error_failed_sentiment_analysis">Failed to analyze sentiment</string>
+    <string name="analyzing_mood">Analyzing your mood...</string>
 
 </resources>

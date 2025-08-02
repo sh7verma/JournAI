@@ -3,6 +3,7 @@ package com.shverma.app.ui.journalentry
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shverma.app.data.network.model.JournalEntryCreate
+import com.shverma.app.data.repository.AiRepository
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.utils.Resource
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JournalEntryViewModel @Inject constructor(
-    private val journalRepository: JournalRepository
+    private val journalRepository: JournalRepository,
+    private val aiRepository: AiRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(JournalEntryUiState())
     val uiState: StateFlow<JournalEntryUiState> = _uiState.asStateFlow()
@@ -55,6 +57,46 @@ class JournalEntryViewModel @Inject constructor(
         }
     }
 
+    fun analyzeMoodInEntry() {
+        val text = _uiState.value.entryText
+        if (text.isBlank()) {
+            sendUiEvent(UiEvent.ShowMessage("Please enter some text to analyze"))
+            return
+        }
+
+        _uiState.update { it.copy(isAnalyzingSentiment = true) }
+
+        viewModelScope.launch {
+            when (val result = aiRepository.analyzeSentiment(text, null)) {
+                is Resource.Success -> {
+                    val analysis = result.data?.analysis ?: "No analysis available"
+                    val moodString = result.data?.mood
+
+                    // Convert mood string to Mood enum
+                    val detectedMood = when (moodString) {
+                        "Sad" -> Mood.Sad
+                        "Down" -> Mood.Down
+                        "Good" -> Mood.Good
+                        "Great" -> Mood.Great
+                        else -> null
+                    }
+
+                    _uiState.update { 
+                        it.copy(
+                            sentimentAnalysis = analysis,
+                            selectedMood = detectedMood,
+                            isAnalyzingSentiment = false
+                        ) 
+                    }
+                }
+                is Resource.Error -> {
+                    sendUiEvent(UiEvent.ShowMessage(result.message ?: "Failed to analyze sentiment"))
+                    _uiState.update { it.copy(isAnalyzingSentiment = false) }
+                }
+            }
+        }
+    }
+
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
             uiEvent.send(event)
@@ -65,5 +107,7 @@ class JournalEntryViewModel @Inject constructor(
 data class JournalEntryUiState(
     val entryText: String = "",
     val selectedMood: Mood? = null,
-    val prompt: String = "Reflect on your day and how you felt."
+    val prompt: String = "Reflect on your day and how you felt.",
+    val sentimentAnalysis: String? = null,
+    val isAnalyzingSentiment: Boolean = false
 )

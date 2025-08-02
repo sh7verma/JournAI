@@ -20,5 +20,6 @@ data class AiTipsResponse(
 )
 
 data class AiSentimentResponse(
-    val sentiment: String
+    val mood: String,
+    val analysis: String
 )

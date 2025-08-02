@@ -15,7 +15,7 @@ interface AiRepository {
     suspend fun getPrompt(): Resource<AiPromptResponse>
     suspend fun correctGrammar(text: String, journalId: String? = null): Resource<AiGrammarResponse>
     suspend fun getTips(text: String, journalId: String? = null): Resource<AiTipsResponse>
-    suspend fun analyzeSentiment(text: String): Resource<AiSentimentResponse>
+    suspend fun analyzeSentiment(text: String, journalId: String? = null): Resource<AiSentimentResponse>
 }
 
 class AiRepositoryImpl @Inject constructor(
@@ -43,10 +43,10 @@ class AiRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun analyzeSentiment(text: String): Resource<AiSentimentResponse> {
+    override suspend fun analyzeSentiment(text: String, journalId: String?): Resource<AiSentimentResponse> {
         return safeApiCall(
             dispatcher = Dispatchers.IO,
-            apiCall = { apiService.analyzeSentiment(AiTextRequest(text)) }
+            apiCall = { apiService.analyzeSentiment(AiTextRequest(text, journalId)) }
         )
     }
 }
