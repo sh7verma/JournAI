@@ -41,7 +41,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 @Composable
 fun JournalsListScreen(
     snackBarHostState: SnackbarHostState,
-    onGetAiTips: () -> Unit = {},
     journalViewModel: JournalsListViewModel = hiltViewModel<JournalsListViewModel>()
 ) {
     val state by journalViewModel.uiState.collectAsStateWithLifecycle()
@@ -121,7 +120,9 @@ fun JournalsListScreen(
             state.journalEntries.forEach { entry: JournalDetail ->
                 DetailedJournalCard(
                     entry = entry,
-                    onGetAiTips = onGetAiTips
+                    tips = entry.aiTips,
+                    grammarCorrection = entry.grammarCorrection,
+                    onGetAiTips = { journalViewModel.getAiTips(entry) }
                 )
             }
         }

@@ -4,6 +4,7 @@ import com.shverma.app.data.network.ApiService
 import com.shverma.app.data.network.model.JournalByDateResponse
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.network.model.JournalEntryCreate
+import com.shverma.app.data.network.model.WeeklyMoodSummaryResponse
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.safeApiCall
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,7 @@ interface JournalRepository {
     suspend fun updateEntry(id: String, entry: JournalEntryCreate): Resource<JournalDetail>
     suspend fun deleteEntry(id: String): Resource<Unit>
     suspend fun getEntriesByDate(date: OffsetDateTime): Resource<JournalByDateResponse>
+    suspend fun getWeeklyMoodSummary(): Resource<WeeklyMoodSummaryResponse>
 }
 
 
@@ -69,6 +71,13 @@ class JournalRepositoryImpl @Inject constructor(
         return safeApiCall(
             dispatcher = Dispatchers.IO,
             apiCall = { apiService.getJournalEntriesByDate(dateStr) }
+        )
+    }
+
+    override suspend fun getWeeklyMoodSummary(): Resource<WeeklyMoodSummaryResponse> {
+        return safeApiCall(
+            dispatcher = Dispatchers.IO,
+            apiCall = { apiService.getWeeklyMoodSummary() }
         )
     }
 }

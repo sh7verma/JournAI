@@ -132,7 +132,10 @@ fun DetailScreen(
             state.journalEntries.forEach { entry ->
                 DetailedJournalCard(
                     entry = entry,
-                    onGetAiTips = onGetAiTips
+                    tips =entry.aiTips,
+                    grammarCorrection = entry.grammarCorrection,
+                    onGetAiTips = { detailsViewModel.getAiTips(entry) },
+                    onGetGrammarCorrection = { detailsViewModel.getGrammarCorrection(entry) }
                 )
             }
         }

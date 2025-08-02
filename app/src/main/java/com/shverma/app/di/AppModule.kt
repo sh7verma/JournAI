@@ -2,6 +2,8 @@ package com.shverma.app.di
 
 import android.content.Context
 import com.shverma.app.data.preference.DataStoreHelper
+import com.shverma.app.data.repository.AiRepository
+import com.shverma.app.data.repository.AiRepositoryImpl
 import com.shverma.app.data.repository.AuthRepository
 import com.shverma.app.data.repository.AuthRepositoryImpl
 import com.shverma.app.data.repository.JournalRepository
@@ -50,4 +52,10 @@ abstract class AppModule {
     abstract fun bindJournalRepository(
         journalRepositoryImpl: JournalRepositoryImpl
     ): JournalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAiRepository(
+        aiRepositoryImpl: AiRepositoryImpl
+    ): AiRepository
 }

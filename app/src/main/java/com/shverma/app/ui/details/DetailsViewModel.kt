@@ -2,8 +2,11 @@ package com.shverma.app.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shverma.androidstarter.R
 import com.shverma.app.data.network.model.JournalDetail
+import com.shverma.app.data.repository.AiRepository
 import com.shverma.app.data.repository.JournalRepository
+import com.shverma.app.utils.GlobalResourceProvider
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val journalRepository: JournalRepository
+    private val journalRepository: JournalRepository,
+    private val aiRepository: AiRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         DetailsUiState()
@@ -39,10 +43,12 @@ class DetailsViewModel @Inject constructor(
             when (val result = journalRepository.getEntriesByDate(date)) {
                 is Resource.Success -> {
                     val entries = result.data?.entries ?: emptyList()
+                    // Sort entries by created_at in descending order (latest first)
+                    val sortedEntries = entries.sortedByDescending { it.created_at }
                     val startDate = result.data?.startDate ?: date
                     _uiState.update { state ->
                         state.copy(
-                            journalEntries = entries,
+                            journalEntries = sortedEntries,
                             selectedDate = date,
                             startDate = startDate
                         )
@@ -67,6 +73,67 @@ class DetailsViewModel @Inject constructor(
             uiEvent.send(event)
         }
     }
+
+    fun getAiTips(journalEntry: JournalDetail) {
+        viewModelScope.launch {
+            when (val result = aiRepository.getTips(journalEntry.text, journalEntry.id)) {
+                is Resource.Success -> {
+                    val tips = result.data?.tips ?: emptyList()
+                    uiState.value.journalEntries
+                        .find { it.id == journalEntry.id }?.let { entry ->
+                            _uiState.update { state ->
+                                state.copy(
+                                    journalEntries = state.journalEntries.map {
+                                        if (it.id == entry.id) {
+                                            it.copy(aiTips = tips)
+                                        } else {
+                                            it
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                }
+
+                is Resource.Error -> {
+                    sendUiEvent(UiEvent.ShowMessage(result.message ?: GlobalResourceProvider.getGlobalString(R.string.error_failed_ai_tips)))
+                }
+            }
+
+        }
+    }
+
+    fun getGrammarCorrection(journalEntry: JournalDetail) {
+        viewModelScope.launch {
+            when (val result = aiRepository.correctGrammar(journalEntry.text, journalEntry.id)) {
+                is Resource.Success -> {
+                    val correctedText = result.data?.corrected ?: ""
+                    uiState.value.journalEntries
+                        .find { it.id == journalEntry.id }?.let { entry ->
+                            _uiState.update { state ->
+                                state.copy(
+                                    journalEntries = state.journalEntries.map {
+                                        if (it.id == entry.id) {
+                                            it.copy(grammarCorrection = correctedText)
+                                        } else {
+                                            it
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                }
+
+                is Resource.Error -> {
+                    sendUiEvent(
+                        UiEvent.ShowMessage(
+                            result.message ?: GlobalResourceProvider.getGlobalString(R.string.error_failed_grammar_correction)
+                        )
+                    )
+                }
+            }
+        }
+    }
 }
 
 data class DetailsUiState(
@@ -74,5 +141,5 @@ data class DetailsUiState(
     val endDate: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
     val selectedDate: OffsetDateTime? = null,
     val moodLabel: String = "",
-    val journalEntries: List<JournalDetail> = emptyList()
+    val journalEntries: List<JournalDetail> = emptyList(),
 )

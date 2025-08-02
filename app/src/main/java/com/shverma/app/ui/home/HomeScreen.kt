@@ -141,8 +141,8 @@ fun HomeScreen(
 
         // Weekly Mood Summary Card
         MoodSummaryCard(
-            streakText = stringResource(R.string.day_streak, state.moodSummary.streak),
-            trendText = state.moodSummary.trend,
+            streakText = stringResource(R.string.day_streak, state.moodSummary.streak!!),
+            mood = state.moodSummary.mood,
             onClick = {
                 // Optional → navigate to detailed mood summary screen
             }

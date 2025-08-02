@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.outlined.SentimentSatisfied
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,10 +25,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.shverma.androidstarter.R
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.ui.theme.AppTypography
@@ -39,6 +43,30 @@ import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.ui.theme.JournAIYellow
 import com.shverma.app.utils.formatWrittenAt
 import org.threeten.bp.OffsetDateTime
+
+@Composable
+fun DottedLineSeparator(
+    modifier: Modifier = Modifier,
+    color: Color = JournAIBrown.copy(alpha = 0.3f),
+    strokeWidth: Float = 2f
+) {
+    Spacer(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .padding(horizontal = 4.dp)
+            .drawBehind {
+                val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                drawLine(
+                    color = color,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    pathEffect = pathEffect,
+                    strokeWidth = strokeWidth
+                )
+            }
+    )
+}
 
 // Helper function to map mood string to Mood enum
 private fun getMoodFromString(moodString: String): Mood? {
@@ -86,7 +114,7 @@ fun JournalCard(
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
-                        text = mood?.label ?: entry.mood.ifBlank { "Okay" },
+                        text = mood?.label ?: entry.mood.ifBlank { stringResource(R.string.default_mood) },
                         style = AppTypography.labelLarge,
                         color = JournAIBrown
                     )
@@ -94,7 +122,7 @@ fun JournalCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = entry.text.ifBlank { "No preview available." },
+                text = entry.text.ifBlank { stringResource(R.string.no_preview_available) },
                 style = AppTypography.bodyLarge,
                 color = JournAIBrown,
                 maxLines = 2,
@@ -160,7 +188,9 @@ fun PromptCard(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = content,
-                style = AppTypography.bodyLarge,
+                style = AppTypography.bodyMedium.copy(
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                ),
                 color = JournAIBrown
             )
         }
@@ -170,10 +200,24 @@ fun PromptCard(
 @Composable
 fun MoodSummaryCard(
     streakText: String,
-    trendText: String,
-    periodText: String = "Last 7 days",
+    mood: String? = null,
     onClick: () -> Unit = {}
 ) {
+    // Calculate trend text from mood if trendText is not provided
+    val displayTrend = when (mood) {
+        null -> stringResource(R.string.no_mood_data)
+        "Great" -> stringResource(R.string.mood_positive)
+        "Good" -> stringResource(R.string.mood_neutral)
+        else -> stringResource(R.string.mood_needs_improvement)
+    }
+
+    // Get mood icon if mood is provided
+    val moodIcon = if (mood != null) {
+        getMoodFromString(mood)?.icon ?: Icons.Outlined.SentimentSatisfied
+    } else {
+        Icons.Outlined.SentimentSatisfied
+    }
+
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -185,48 +229,32 @@ fun MoodSummaryCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Weekly Mood Summary",
+                text = stringResource(R.string.weekly_mood_summary),
                 style = AppTypography.titleMedium,
                 color = JournAIBrown
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "🔥 $streakText",
+                style = AppTypography.bodyLarge,
+                color = JournAIBrown
+            )
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "🔥 $streakText",
-                    style = AppTypography.bodyLarge,
-                    color = JournAIBrown
-                )
-                Text(
-                    text = "↑ $trendText",
-                    style = AppTypography.bodyLarge,
-                    color = JournAIBrown
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "📅 $periodText",
-                        style = AppTypography.bodyMedium,
-                        color = JournAIBrown
-                    )
-                }
-
                 Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = null,
+                    imageVector = moodIcon,
+                    contentDescription = mood ?: "",
                     tint = JournAIBrown,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = "↑ $displayTrend",
+                    style = AppTypography.bodyLarge,
+                    color = JournAIBrown
                 )
             }
         }
@@ -236,7 +264,10 @@ fun MoodSummaryCard(
 @Composable
 fun DetailedJournalCard(
     entry: JournalDetail,
-    onGetAiTips: (() -> Unit)? = null
+    tips: List<String>? = null,
+    grammarCorrection: String? = null,
+    onGetAiTips: (() -> Unit)? = null,
+    onGetGrammarCorrection: (() -> Unit)? = null
 ) {
     // Try to map the mood string to a Mood enum
     val mood = getMoodFromString(entry.mood)
@@ -282,14 +313,86 @@ fun DetailedJournalCard(
                 color = JournAIBrown
             )
 
-            if (onGetAiTips != null) {
+            Spacer(Modifier.height(16.dp))
+
+            if (!tips.isNullOrEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                // Custom dotted line separator
+                DottedLineSeparator()
+                Spacer(Modifier.height(8.dp))
+            }
+
+            // Display tips in italics if available
+            if (!tips.isNullOrEmpty()) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.writing_tips),
+                        style = AppTypography.labelLarge,
+                        color = JournAIBrown
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    tips.forEach { tip ->
+                        Text(
+                            text = "• $tip",
+                            style = AppTypography.bodyMedium.copy(
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                            ),
+                            color = JournAIBrown
+                        )
+                        Spacer(Modifier.height(4.dp))
+                    }
+                }
+            }
+
+            // Add dotted line between tips and grammar correction
+            if (!grammarCorrection.isNullOrEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                // Custom dotted line separator
+                DottedLineSeparator()
+                Spacer(Modifier.height(8.dp))
+            }
+
+            // Display grammar correction if available
+            if (!grammarCorrection.isNullOrEmpty()) {
+                Spacer(Modifier.height(16.dp))
+                Column {
+                    Text(
+                        text = stringResource(R.string.grammar_correction),
+                        style = AppTypography.labelLarge,
+                        color = JournAIBrown
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = grammarCorrection,
+                        style = AppTypography.bodyMedium.copy(
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        ),
+                        color = JournAIBrown
+                    )
+                }
+            }
+
+            // Button for AI Writing Tips
+            if (onGetAiTips != null && tips.isNullOrEmpty()) {
                 Spacer(Modifier.height(16.dp))
                 JournButton(
-                    text = "Get AI Writing Tips",
+                    text = stringResource(R.string.get_ai_writing_tips),
                     iconResId = com.shverma.androidstarter.R.drawable.ic_bulb,
                     backgroundColor = JournAIPink,
                     contentColor = JournAIBrown,
                     onClick = onGetAiTips
+                )
+            }
+
+            // Button for Grammar Correction
+            if (!tips.isNullOrEmpty() && onGetGrammarCorrection != null && grammarCorrection.isNullOrEmpty()) {
+                Spacer(Modifier.height(16.dp))
+                JournButton(
+                    text = stringResource(R.string.get_grammar_correction),
+                    iconResId = com.shverma.androidstarter.R.drawable.ic_bulb,
+                    backgroundColor = JournAIYellow,
+                    contentColor = JournAIBrown,
+                    onClick = onGetGrammarCorrection
                 )
             }
         }

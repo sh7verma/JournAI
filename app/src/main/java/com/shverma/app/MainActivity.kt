@@ -113,7 +113,7 @@ fun AppNavigation(
             val mainRoutes = setOf(
                 Routes.JournAIHomeRoute::class.qualifiedName,
                 Routes.JournalRoute::class.qualifiedName,
-                Routes.InsightsRoute::class.qualifiedName,
+//                Routes.InsightsRoute::class.qualifiedName,
                 Routes.ProfileRoute::class.qualifiedName
             )
             if (currentRoute in mainRoutes) {
@@ -124,7 +124,7 @@ fun AppNavigation(
                         val itemRoute = when (item.route) {
                             is Routes.JournAIHomeRoute -> Routes.JournAIHomeRoute::class.qualifiedName
                             is Routes.JournalRoute -> Routes.JournalRoute::class.qualifiedName
-                            is Routes.InsightsRoute -> Routes.InsightsRoute::class.qualifiedName
+//                            is Routes.InsightsRoute -> Routes.InsightsRoute::class.qualifiedName
                             is Routes.ProfileRoute -> Routes.ProfileRoute::class.qualifiedName
                             else -> item.route.toString()
                         }
@@ -184,9 +184,7 @@ fun AppNavigation(
             }
             composable<Routes.JournalRoute> {
                 JournalsListScreen(
-                    snackBarHostState = snackBarHostState, onGetAiTips = {
-                        navController.popBackStack()
-                    }
+                    snackBarHostState = snackBarHostState
                 )
             }
             composable<Routes.InsightsRoute> {
@@ -228,11 +226,11 @@ private fun navItems(): List<BottomNavItem> = listOf(
         label = "Journal",
         icon = Icons.Filled.Book
     ),
-    BottomNavItem(
-        route = Routes.InsightsRoute,
-        label = "Insights",
-        icon = Icons.Filled.BarChart
-    ),
+//    BottomNavItem(
+//        route = Routes.InsightsRoute,
+//        label = "Insights",
+//        icon = Icons.Filled.BarChart
+//    ),
     BottomNavItem(
         route = Routes.ProfileRoute,
         label = "Profile",

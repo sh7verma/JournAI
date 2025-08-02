@@ -2,6 +2,7 @@ package com.shverma.app.data.preference
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +23,10 @@ class DataStoreHelper @Inject constructor(
         private val KEY_TOKEN_TYPE = stringPreferencesKey("token_type")
         private val KEY_USER_ID = stringPreferencesKey("user_id")
         private val KEY_USER_EMAIL = stringPreferencesKey("user_email")
+        private val KEY_DAILY_PROMPT = stringPreferencesKey("daily_prompt")
+        private val KEY_PROMPT_DATE = stringPreferencesKey("prompt_date")
+        private val KEY_MOOD = stringPreferencesKey("mood")
+        private val KEY_STREAK = intPreferencesKey("streak")
     }
 
     suspend fun saveUserSession(
@@ -42,6 +47,24 @@ class DataStoreHelper @Inject constructor(
     val tokenType: Flow<String?> = context.dataStore.data.map { it[KEY_TOKEN_TYPE] }
     val userId: Flow<String?> = context.dataStore.data.map { it[KEY_USER_ID] }
     val userEmail: Flow<String?> = context.dataStore.data.map { it[KEY_USER_EMAIL] }
+    val dailyPrompt: Flow<String?> = context.dataStore.data.map { it[KEY_DAILY_PROMPT] }
+    val promptDate: Flow<String?> = context.dataStore.data.map { it[KEY_PROMPT_DATE] }
+    val mood: Flow<String?> = context.dataStore.data.map { it[KEY_MOOD] }
+    val streak: Flow<Int?> = context.dataStore.data.map { it[KEY_STREAK] }
+
+    suspend fun saveDailyPrompt(prompt: String, date: String) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_DAILY_PROMPT] = prompt
+            prefs[KEY_PROMPT_DATE] = date
+        }
+    }
+
+    suspend fun saveMoodSummary(mood: String?, streak: Int?) {
+        context.dataStore.edit { prefs ->
+            mood?.let { prefs[KEY_MOOD] = it }
+            streak?.let { prefs[KEY_STREAK] = it }
+        }
+    }
 
     suspend fun clearTokens() {
         context.dataStore.edit { prefs ->

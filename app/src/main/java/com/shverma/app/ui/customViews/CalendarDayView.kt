@@ -151,16 +151,12 @@ fun CalendarWeekRow(
                         color = JournAIBrown
                     )
                     Spacer(Modifier.height(2.dp))
-                    if (day.moodIcon != null) {
-                        Icon(
-                            imageVector = day.moodIcon,
-                            contentDescription = day.moodLabel,
-                            tint = JournAIBrown,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    } else {
-                        Spacer(Modifier.height(22.dp))
-                    }
+                    Icon(
+                        imageVector = day.moodIcon ?: Icons.Outlined.SentimentSatisfied,
+                        contentDescription = day.moodLabel.ifEmpty { "Neutral" },
+                        tint = JournAIBrown,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
                 // Pink ring for "special" day, but not main selected
                 if (isSpecial && !isSelected) {

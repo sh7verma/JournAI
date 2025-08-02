@@ -1,11 +1,17 @@
 package com.shverma.app.data.network
 
+import com.shverma.app.data.network.model.AiGrammarResponse
+import com.shverma.app.data.network.model.AiPromptResponse
+import com.shverma.app.data.network.model.AiSentimentResponse
+import com.shverma.app.data.network.model.AiTextRequest
+import com.shverma.app.data.network.model.AiTipsResponse
 import com.shverma.app.data.network.model.JournalByDateResponse
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.network.model.JournalEntryCreate
 import com.shverma.app.data.network.model.LoginRequest
 import com.shverma.app.data.network.model.RegisterRequest
 import com.shverma.app.data.network.model.UserResponse
+import com.shverma.app.data.network.model.WeeklyMoodSummaryResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -21,6 +27,19 @@ interface ApiService {
 
     @POST("/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<UserResponse>
+
+    // --- AI endpoints ---
+    @GET("/ai/prompt")
+    suspend fun getAiPrompt(): Response<AiPromptResponse>
+
+    @POST("/ai/grammar")
+    suspend fun correctGrammar(@Body request: AiTextRequest): Response<AiGrammarResponse>
+
+    @POST("/ai/tips")
+    suspend fun getAiTips(@Body request: AiTextRequest): Response<AiTipsResponse>
+
+    @POST("/ai/sentiment")
+    suspend fun analyzeSentiment(@Body request: AiTextRequest): Response<AiSentimentResponse>
 
     // --- Journal endpoints ---
     @POST("/journal/")
@@ -45,4 +64,7 @@ interface ApiService {
     suspend fun getJournalEntriesByDate(
         @Query("date") date: String
     ): Response<JournalByDateResponse>
+
+    @GET("/journal/weekly-mood-summary")
+    suspend fun getWeeklyMoodSummary(): Response<WeeklyMoodSummaryResponse>
 }
