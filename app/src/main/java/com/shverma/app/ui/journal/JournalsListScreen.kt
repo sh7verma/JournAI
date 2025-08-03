@@ -124,7 +124,8 @@ fun JournalsListScreen(
                     entry = entry,
                     tips = entry.aiTips,
                     grammarCorrection = entry.grammarCorrection,
-                    onGetAiTips = { journalViewModel.getAiTips(entry) }
+                    onGetAiTips = { journalViewModel.getAiTips(entry) },
+                    onGetGrammarCorrection = { journalViewModel.getGrammarCorrection(entry) }
                 )
             }
         }

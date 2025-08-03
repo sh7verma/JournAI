@@ -2,10 +2,12 @@ package com.shverma.app.ui.journal
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shverma.androidstarter.R
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.preference.DataStoreHelper
 import com.shverma.app.data.repository.AiRepository
 import com.shverma.app.data.repository.JournalRepository
+import com.shverma.app.utils.GlobalResourceProvider
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -125,6 +127,38 @@ class JournalsListViewModel @Inject constructor(
                     sendUiEvent(
                         UiEvent.ShowMessage(
                             result.message
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun getGrammarCorrection(journalEntry: JournalDetail) {
+        viewModelScope.launch {
+            when (val result = aiRepository.correctGrammar(journalEntry.text, journalEntry.id)) {
+                is Resource.Success -> {
+                    val correctedText = result.data?.corrected ?: ""
+                    uiState.value.journalEntries
+                        .find { it.id == journalEntry.id }?.let { entry ->
+                            _uiState.update { state ->
+                                state.copy(
+                                    journalEntries = state.journalEntries.map {
+                                        if (it.id == entry.id) {
+                                            it.copy(grammarCorrection = correctedText)
+                                        } else {
+                                            it
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                }
+
+                is Resource.Error -> {
+                    sendUiEvent(
+                        UiEvent.ShowMessage(
+                            result.message ?: GlobalResourceProvider.getGlobalString(R.string.error_failed_grammar_correction)
                         )
                     )
                 }
