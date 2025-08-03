@@ -191,8 +191,16 @@ fun AppNavigation(
                 PlaceholderScreen("Insights")
             }
             composable<Routes.ProfileRoute> {
-                // TODO: Replace with actual ProfileScreen
-                PlaceholderScreen("Profile")
+                com.shverma.app.ui.profile.ProfileScreen(
+                    onNavigateToLogin = {
+                        navController.navigate(Routes.LoginRoute) {
+                            popUpTo(Routes.JournAIHomeRoute) { inclusive = true }
+                        }
+                    },
+                    onNavigateToChangePassword = {
+                        navController.navigate(Routes.ChangePasswordRoute)
+                    }
+                )
             }
             composable<Routes.DetailRoute> { navBackStackEntry ->
                 val args = navBackStackEntry.toRoute<Routes.DetailRoute>()
@@ -206,6 +214,14 @@ fun AppNavigation(
                 JournalEntryScreen(
                     snackBarHostState = snackBarHostState,
                     modifier = Modifier, onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<Routes.ChangePasswordRoute> {
+                com.shverma.app.ui.password.ChangePasswordScreen(
+                    onBackToLogin = {
                         navController.popBackStack()
                     }
                 )
@@ -278,4 +294,7 @@ object Routes {
 
     @Serializable
     object LoginRoute
+
+    @Serializable
+    object ChangePasswordRoute
 }

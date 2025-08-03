@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -139,10 +140,13 @@ fun JournButton(
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled && !isLoading,
         modifier = modifier
             .fillMaxWidth()
             .height(54.dp), // matches your Figma
@@ -152,15 +156,25 @@ fun JournButton(
         ),
         shape = RoundedCornerShape(16.dp) // matches your design
     ) {
-        if (iconResId != null) {
-            Icon(
-                painter = painterResource(id = iconResId),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
+        if (isLoading) {
+            // Show loading indicator
+            CircularProgressIndicator(
+                color = contentColor,
+                modifier = Modifier.size(24.dp),
+                strokeWidth = 2.dp
             )
-            Spacer(modifier = Modifier.width(8.dp))
+        } else {
+            // Show normal content
+            if (iconResId != null) {
+                Icon(
+                    painter = painterResource(id = iconResId),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(text = text, style = AppTypography.labelLarge)
         }
-        Text(text = text, style = AppTypography.labelLarge)
     }
 }
 

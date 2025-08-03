@@ -61,9 +61,11 @@ fun JournalsListScreen(
     val endDate = state.endDate
     val selectedDate = state.selectedDate
 
-    val moodMap = createMoodMap(startDate, endDate)
+    // Use endDate as fallback if startDate is null
+    val effectiveStartDate = startDate ?: endDate
+    val moodMap = createMoodMap(effectiveStartDate, endDate)
     val days = remember(startDate, endDate, moodMap) {
-        generateCalendarDays(startDate, endDate, moodMap)
+        generateCalendarDays(effectiveStartDate, endDate, moodMap)
     }
 
     Column(

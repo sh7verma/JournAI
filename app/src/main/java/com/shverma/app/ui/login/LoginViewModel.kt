@@ -19,8 +19,14 @@ data class LoginUiState(
     val isLoginEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val isRegistering: Boolean = false,
+    val isSocialLoginInProgress: Boolean = false,
+    val socialLoginType: SocialLoginType? = null,
     val error: String? = null
 )
+
+enum class SocialLoginType {
+    GOOGLE, APPLE
+}
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -114,6 +120,78 @@ class LoginViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun loginWithGoogle(onSuccess: () -> Unit) {
+        if (_uiState.value.isLoading) return
+        _uiState.update { 
+            it.copy(
+                isLoading = true, 
+                isSocialLoginInProgress = true,
+                socialLoginType = SocialLoginType.GOOGLE,
+                error = null
+            ) 
+        }
+
+        // This is a placeholder for the actual Google authentication implementation
+        // In a real implementation, you would:
+        // 1. Launch the Google Sign-In intent
+        // 2. Handle the result in the activity/fragment
+        // 3. Send the Google ID token to your backend
+        // 4. Get back a session token
+
+        // For now, we'll just simulate a delay and success
+        viewModelScope.launch {
+            // Simulate network delay
+            kotlinx.coroutines.delay(1500)
+
+            // Update UI state to indicate success and call the onSuccess callback
+            _uiState.update { 
+                it.copy(
+                    isLoading = false, 
+                    isSocialLoginInProgress = false,
+                    socialLoginType = null,
+                    error = null
+                ) 
+            }
+            onSuccess()
+        }
+    }
+
+    fun loginWithApple(onSuccess: () -> Unit) {
+        if (_uiState.value.isLoading) return
+        _uiState.update { 
+            it.copy(
+                isLoading = true, 
+                isSocialLoginInProgress = true,
+                socialLoginType = SocialLoginType.APPLE,
+                error = null
+            ) 
+        }
+
+        // This is a placeholder for the actual Apple authentication implementation
+        // In a real implementation, you would:
+        // 1. Launch the Apple Sign-In flow
+        // 2. Handle the result in the activity/fragment
+        // 3. Send the Apple ID token to your backend
+        // 4. Get back a session token
+
+        // For now, we'll just simulate a delay and success
+        viewModelScope.launch {
+            // Simulate network delay
+            kotlinx.coroutines.delay(1500)
+
+            // Update UI state to indicate success and call the onSuccess callback
+            _uiState.update { 
+                it.copy(
+                    isLoading = false, 
+                    isSocialLoginInProgress = false,
+                    socialLoginType = null,
+                    error = null
+                ) 
+            }
+            onSuccess()
         }
     }
 }

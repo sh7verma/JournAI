@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.shverma.androidstarter.R
 import com.shverma.app.ui.customViews.Mood
+import com.shverma.app.ui.JournButton
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
@@ -157,23 +158,15 @@ fun JournalEntryScreen(
                     )
 
                     if (!state.isAnalyzingSentiment) {
-                        Button(
-                            onClick = { journalEntryViewModel.analyzeMoodInEntry() },
-                            shape = RoundedCornerShape(50),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = JournAIBrown,
-                                contentColor = JournAILightPeach
-                            ),
+                        JournButton(
+                            text = "",
+                            iconResId = R.drawable.ic_bulb,
+                            backgroundColor = JournAIBrown,
+                            contentColor = JournAILightPeach,
                             modifier = Modifier
-                                .wrapContentSize()
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_bulb),
-                                contentDescription = "Analyze Mood",
-                                tint = JournAILightPeach,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
+                                .wrapContentSize(),
+                            onClick = { journalEntryViewModel.analyzeMoodInEntry() }
+                        )
                     }
                 }
 
@@ -274,19 +267,14 @@ fun JournalEntryScreen(
                 )
             }*/
 
-            Button(
-                onClick = { journalEntryViewModel.createJournalEntry() },
-                shape = RoundedCornerShape(32.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = JournAIBrown,
-                    contentColor = Color.White
-                ),
+            JournButton(
+                text = "Save Entry",
+                backgroundColor = JournAIBrown,
+                contentColor = Color.White,
                 modifier = Modifier
-                    .height(54.dp)
-                    .width(180.dp)
-            ) {
-                Text("Save Entry", style = AppTypography.labelLarge)
-            }
+                    .width(180.dp),
+                onClick = { journalEntryViewModel.createJournalEntry() }
+            )
 
            /* IconButton(
                 onClick = {}*//*onVoiceClick*//*,

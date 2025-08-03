@@ -5,6 +5,7 @@ import com.shverma.app.data.network.model.AiPromptResponse
 import com.shverma.app.data.network.model.AiSentimentResponse
 import com.shverma.app.data.network.model.AiTextRequest
 import com.shverma.app.data.network.model.AiTipsResponse
+import com.shverma.app.data.network.model.ChangePasswordRequest
 import com.shverma.app.data.network.model.JournalByDateResponse
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.network.model.JournalEntryCreate
@@ -27,6 +28,9 @@ interface ApiService {
 
     @POST("/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<UserResponse>
+
+    @POST("/auth/change-password")
+    suspend fun changePassword(@Body request: ChangePasswordRequest): Response<Unit>
 
     // --- AI endpoints ---
     @GET("/ai/prompt")

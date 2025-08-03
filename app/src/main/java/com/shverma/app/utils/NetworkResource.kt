@@ -16,10 +16,6 @@ data class ErrorDetail(
     @SerializedName("message") val message: String
 )
 
-data class ErrorResponse(
-    @SerializedName("detail") val detail: ErrorDetail?
-)
-
 sealed class Resource<T> {
     data class Success<T>(val data: T?) : Resource<T>()
     data class Error<T>(
@@ -68,10 +64,9 @@ private fun <T : Any> handleBadRequest(response: Response<T>): Resource<T> {
     val errorBody = response.errorBody()?.string()
     return if (!errorBody.isNullOrEmpty()) {
         try {
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            val detail = errorResponse.detail
-            if (detail != null) {
-                Resource.Error(message = detail.message, errorCode = detail.code)
+            val errorResponse = Gson().fromJson(errorBody, ErrorDetail::class.java)
+            if (errorResponse != null) {
+                Resource.Error(message = errorResponse.message, errorCode = errorResponse.code)
             } else {
                 Resource.Error("${response.code()} ${getGlobalString(R.string.error_unknown)}")
             }

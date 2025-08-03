@@ -12,6 +12,11 @@ data class RegisterRequest(
     val password: String
 )
 
+data class ChangePasswordRequest(
+    val current_password: String,
+    val new_password: String
+)
+
 data class UserResponse(
     val id: String,
     val email: String,

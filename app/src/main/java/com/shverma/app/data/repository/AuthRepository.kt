@@ -1,6 +1,7 @@
 package com.shverma.app.data.repository
 
 import com.shverma.app.data.network.ApiService
+import com.shverma.app.data.network.model.ChangePasswordRequest
 import com.shverma.app.data.network.model.LoginRequest
 import com.shverma.app.data.network.model.RegisterRequest
 import com.shverma.app.data.network.model.UserResponse
@@ -13,6 +14,7 @@ import javax.inject.Inject
 interface AuthRepository {
     suspend fun login(email: String, password: String): Resource<UserResponse>
     suspend fun register(email: String, password: String): Resource<UserResponse>
+    suspend fun changePassword(currentPassword: String, newPassword: String): Resource<Unit>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -49,5 +51,19 @@ class AuthRepositoryImpl @Inject constructor(
             )
         }
         return result
+    }
+
+    override suspend fun changePassword(currentPassword: String, newPassword: String): Resource<Unit> {
+        return safeApiCall(
+            dispatcher = Dispatchers.IO,
+            apiCall = { 
+                apiService.changePassword(
+                    ChangePasswordRequest(
+                        current_password = currentPassword,
+                        new_password = newPassword
+                    )
+                ) 
+            }
+        )
     }
 }

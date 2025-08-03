@@ -27,6 +27,7 @@ class DataStoreHelper @Inject constructor(
         private val KEY_PROMPT_DATE = stringPreferencesKey("prompt_date")
         private val KEY_MOOD = stringPreferencesKey("mood")
         private val KEY_STREAK = intPreferencesKey("streak")
+        private val KEY_JOURNAL_START_DATE = stringPreferencesKey("journal_start_date")
     }
 
     suspend fun saveUserSession(
@@ -51,6 +52,7 @@ class DataStoreHelper @Inject constructor(
     val promptDate: Flow<String?> = context.dataStore.data.map { it[KEY_PROMPT_DATE] }
     val mood: Flow<String?> = context.dataStore.data.map { it[KEY_MOOD] }
     val streak: Flow<Int?> = context.dataStore.data.map { it[KEY_STREAK] }
+    val journalStartDate: Flow<String?> = context.dataStore.data.map { it[KEY_JOURNAL_START_DATE] }
 
     suspend fun saveDailyPrompt(prompt: String, date: String) {
         context.dataStore.edit { prefs ->
@@ -63,6 +65,12 @@ class DataStoreHelper @Inject constructor(
         context.dataStore.edit { prefs ->
             mood?.let { prefs[KEY_MOOD] = it }
             streak?.let { prefs[KEY_STREAK] = it }
+        }
+    }
+
+    suspend fun saveJournalStartDate(startDate: String) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_JOURNAL_START_DATE] = startDate
         }
     }
 

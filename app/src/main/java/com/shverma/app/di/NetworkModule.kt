@@ -26,6 +26,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+//    private const val BASE_URL = "https://journai-backend-pcyy.onrender.com/"
+
     private const val BASE_URL = "https://fluffy-guide-j4pqqwv69p424v-8000.app.github.dev/"
 
     @Provides

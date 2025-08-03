@@ -65,17 +65,22 @@ fun generateCalendarDays(
     moodMap: Map<OffsetDateTime, Mood?>
 ): List<CalendarDayUi> {
     val days = mutableListOf<CalendarDayUi>()
-    var current = startDate
-    while (!current.isAfter(endDate)) {
-        val mood = moodMap[current]
+    var currentDate = startDate.toLocalDate()
+    val endDateLocal = endDate.toLocalDate()
+    val offset = startDate.offset
+
+    while (!currentDate.isAfter(endDateLocal)) {
+        val dateTime = currentDate.atStartOfDay().atOffset(offset)
+        // Try exact match first, fallback to date-only match for mood
+        val mood = moodMap[dateTime] ?: moodMap.entries.find { it.key.toLocalDate() == currentDate }?.value
         days.add(
             CalendarDayUi(
-                date = current,
+                date = dateTime,
                 moodIcon = mood?.icon,
                 moodLabel = mood?.label ?: ""
             )
         )
-        current = current.plusDays(1)
+        currentDate = currentDate.plusDays(1)
     }
     return days
 }

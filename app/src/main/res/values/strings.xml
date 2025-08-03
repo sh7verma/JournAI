@@ -49,8 +49,19 @@
     <string name="password">Password</string>
     <string name="hide_password">Hide password</string>
     <string name="show_password">Show password</string>
-    <string name="login">Login</string>
+    <string name="login">Log In</string>
     <string name="register">Register</string>
+    <string name="welcome_to_journai">Welcome to JournAI</string>
+    <string name="app_subtitle">Your daily reflections AI</string>
+    <string name="email_placeholder">Enter your email</string>
+    <string name="password_placeholder">Enter your password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="login_with_apple">Login with Apple</string>
+    <string name="motivational_quote">Write today, reflect tomorrow, grow forever.</string>
+    <string name="or_continue_with">or continue with</string>
+    <string name="start_journaling_journey">Start your journaling journey today</string>
 
     <!-- Home Screen -->
     <string name="default_prompt">What made you smile today?</string>
@@ -71,5 +82,18 @@
     <string name="mood_analysis">Mood Analysis:</string>
     <string name="error_failed_sentiment_analysis">Failed to analyze sentiment</string>
     <string name="analyzing_mood">Analyzing your mood...</string>
+    <string name="change_password">Change Password</string>
+
+    <!-- Change Password Screen -->
+    <string name="change_password_subtitle">Change your password to keep your account secure.</string>
+    <string name="current_password">Enter current password</string>
+    <string name="new_password">Enter new password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="change_password_button">Change Password</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="security_footer">Take control of your security</string>
+    <string name="password_changed_success">Password changed successfully</string>
+    <string name="password_change_error">Failed to change password</string>
+    <string name="sign_out">Sign Out</string>
 
 </resources>
