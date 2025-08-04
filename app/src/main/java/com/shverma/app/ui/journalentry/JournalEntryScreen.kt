@@ -23,7 +23,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -94,10 +92,12 @@ fun JournalEntryScreen(
                     style = AppTypography.labelLarge,
                     color = JournAIBrown
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = stringResource(R.string.reflect_on_day),
-                    style = AppTypography.bodyLarge,
+                    text = state.prompt,
+                    style = AppTypography.bodyMedium.copy(
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                    ),
                     color = JournAIBrown
                 )
             }
@@ -260,8 +260,8 @@ fun JournalEntryScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-           /* IconButton(
-                onClick = {}*//*onEditClick*//*,
+            /* IconButton(
+                 onClick = {}*//*onEditClick*//*,
                 modifier = Modifier
                     .size(56.dp)
                     .background(JournAILightPeach, CircleShape)
@@ -288,8 +288,8 @@ fun JournalEntryScreen(
                 Text("Save Entry", style = AppTypography.labelLarge)
             }
 
-           /* IconButton(
-                onClick = {}*//*onVoiceClick*//*,
+            /* IconButton(
+                 onClick = {}*//*onVoiceClick*//*,
                 modifier = Modifier
                     .size(56.dp)
                     .background(JournAILightPeach, CircleShape)

@@ -2,17 +2,22 @@ package com.shverma.app.ui.journalentry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shverma.androidstarter.R
 import com.shverma.app.data.network.model.JournalEntryCreate
+import com.shverma.app.data.preference.DataStoreHelper
 import com.shverma.app.data.repository.AiRepository
 import com.shverma.app.data.repository.JournalRepository
 import com.shverma.app.ui.customViews.Mood
+import com.shverma.app.utils.GlobalResourceProvider
 import com.shverma.app.utils.Resource
 import com.shverma.app.utils.UiEvent
+import com.shverma.app.utils.getCurrentDateFormatted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class JournalEntryViewModel @Inject constructor(
     private val journalRepository: JournalRepository,
-    private val aiRepository: AiRepository
+    private val aiRepository: AiRepository,
+    private val dataStoreHelper: DataStoreHelper
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(JournalEntryUiState())
     val uiState: StateFlow<JournalEntryUiState> = _uiState.asStateFlow()
@@ -34,6 +40,55 @@ class JournalEntryViewModel @Inject constructor(
 
     fun onMoodSelected(mood: Mood) {
         _uiState.update { it.copy(selectedMood = mood) }
+    }
+
+
+    init {
+        initializeJournalEntry()
+    }
+
+    fun initializeJournalEntry() {
+        viewModelScope.launch {
+            val currentDate = getCurrentDateFormatted()
+
+            val storedPromptDate = dataStoreHelper.promptDate.firstOrNull()
+            val storedPrompt = dataStoreHelper.dailyPrompt.firstOrNull()
+
+            if (storedPrompt == null || storedPromptDate != currentDate) {
+                when (val result = aiRepository.getPrompt()) {
+                    is Resource.Success -> {
+                        val newPrompt = result.data?.prompt
+                        newPrompt?.let {
+                            _uiState.update { state ->
+                                state.copy(
+                                    prompt = newPrompt
+                                )
+                            }
+                            dataStoreHelper.saveDailyPrompt(it, currentDate)
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        val promptToUse = storedPrompt
+                            ?: GlobalResourceProvider.getGlobalString(R.string.default_prompt)
+
+                        _uiState.update { state ->
+                            state.copy(
+                                prompt = promptToUse
+                            )
+                        }
+                        sendUiEvent(UiEvent.ShowMessage(result.message))
+                    }
+                }
+            } else {
+                // Use the stored prompt from today
+                _uiState.update { state ->
+                    state.copy(
+                        prompt = storedPrompt
+                    )
+                }
+            }
+        }
     }
 
     fun createJournalEntry() {
@@ -81,16 +136,21 @@ class JournalEntryViewModel @Inject constructor(
                         else -> null
                     }
 
-                    _uiState.update { 
+                    _uiState.update {
                         it.copy(
                             sentimentAnalysis = analysis,
                             selectedMood = detectedMood,
                             isAnalyzingSentiment = false
-                        ) 
+                        )
                     }
                 }
+
                 is Resource.Error -> {
-                    sendUiEvent(UiEvent.ShowMessage(result.message ?: "Failed to analyze sentiment"))
+                    sendUiEvent(
+                        UiEvent.ShowMessage(
+                            result.message ?: "Failed to analyze sentiment"
+                        )
+                    )
                     _uiState.update { it.copy(isAnalyzingSentiment = false) }
                 }
             }

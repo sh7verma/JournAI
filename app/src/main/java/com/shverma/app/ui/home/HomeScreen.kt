@@ -103,7 +103,7 @@ fun HomeScreen(
 
         // Today's Prompt
         PromptCard(
-            title = context.getString(R.string.todays_prompt),
+            title = context.getString(R.string.todays_prompt_quote),
             content = state.prompt,
             modifier = Modifier
                 .fillMaxWidth()
