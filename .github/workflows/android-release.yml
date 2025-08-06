@@ -35,13 +35,13 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: ⬆️ Upload signed APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: app/build/outputs/apk/release/app-release.apk
 
       - name: ⬆️ Upload signed AAB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
