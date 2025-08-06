@@ -29,7 +29,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.ui.JournButton
 import com.shverma.app.ui.JournalCard
 import com.shverma.app.ui.MoodSummaryCard

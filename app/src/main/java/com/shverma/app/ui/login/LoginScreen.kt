@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.ui.login.SocialLoginType
 import com.shverma.app.ui.DottedLineSeparator
 import com.shverma.app.ui.JournButton

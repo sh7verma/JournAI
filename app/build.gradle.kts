@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.shverma.androidstarter"
+    namespace = "com.shverma.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.shverma.androidstarter"
+        applicationId = "com.shverma.app"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -23,14 +23,35 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            // These values should be provided through environment variables or a secure properties file
+            // For this example, we're using placeholder values
+            storeFile = file("keystore/release.keystore")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "keystore_password"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "key_alias"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "key_password"
+        }
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("boolean", "DEBUG_MODE", "true")
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("boolean", "DEBUG_MODE", "false")
+            signingConfig = signingConfigs.getByName("release")
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

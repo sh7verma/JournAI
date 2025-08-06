@@ -2,7 +2,7 @@ package com.shverma.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.data.network.model.WeeklyMoodSummaryResponse
 import com.shverma.app.data.preference.DataStoreHelper

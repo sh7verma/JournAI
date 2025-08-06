@@ -2,7 +2,7 @@ package com.shverma.app.ui.journalentry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.data.network.model.JournalEntryCreate
 import com.shverma.app.data.preference.DataStoreHelper
 import com.shverma.app.data.repository.AiRepository

@@ -2,7 +2,7 @@ package com.shverma.app.utils
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.utils.GlobalResourceProvider.getGlobalString
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

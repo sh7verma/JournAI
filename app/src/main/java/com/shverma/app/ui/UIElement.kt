@@ -34,7 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.shverma.androidstarter.R
+import com.shverma.app.R
 import com.shverma.app.data.network.model.JournalDetail
 import com.shverma.app.ui.customViews.Mood
 import com.shverma.app.ui.theme.AppTypography
@@ -391,7 +391,7 @@ fun DetailedJournalCard(
                 Spacer(Modifier.height(16.dp))
                 JournButton(
                     text = stringResource(R.string.get_ai_writing_tips),
-                    iconResId = com.shverma.androidstarter.R.drawable.ic_bulb,
+                    iconResId = R.drawable.ic_bulb,
                     backgroundColor = JournAIPink,
                     contentColor = JournAIBrown,
                     onClick = onGetAiTips
@@ -403,7 +403,7 @@ fun DetailedJournalCard(
                 Spacer(Modifier.height(16.dp))
                 JournButton(
                     text = stringResource(R.string.get_grammar_correction),
-                    iconResId = com.shverma.androidstarter.R.drawable.ic_bulb,
+                    iconResId = R.drawable.ic_bulb,
                     backgroundColor = JournAIYellow,
                     contentColor = JournAIBrown,
                     onClick = onGetGrammarCorrection
