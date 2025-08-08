@@ -1,7 +1,7 @@
 [versions]
 agp = "8.7.3"
 foundation = "1.8.2"
-jetbrains-kotlin-android = "2.1.0"
+jetbrains-kotlin-android = "2.0.21"
 android-git-version = "0.4.14"
 dagger-hilt-android-version = "2.53"
 google-devtools-ksp-version = "2.0.21-1.0.26"

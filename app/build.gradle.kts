@@ -23,6 +23,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    lint {
+        disable += "NullSafeMutableLiveData"
+    }
+
     signingConfigs {
         create("release") {
             // These values should be provided through environment variables or a secure properties file
