@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
 
     fun signOut() {
         viewModelScope.launch {
-            dataStoreHelper.clearTokens()
+            dataStoreHelper.clearAllData()
             // Navigate to login screen would be handled by the caller
         }
     }

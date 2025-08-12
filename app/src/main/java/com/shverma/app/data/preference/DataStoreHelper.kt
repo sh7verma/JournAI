@@ -82,4 +82,11 @@ class DataStoreHelper @Inject constructor(
             prefs.remove(KEY_USER_EMAIL)
         }
     }
+
+    suspend fun clearAllData() {
+        context.dataStore.edit { prefs ->
+            prefs.clear()
+        }
+    }
+
 }

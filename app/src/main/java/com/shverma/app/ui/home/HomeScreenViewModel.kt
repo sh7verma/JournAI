@@ -22,12 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-data class MoodSummary(
-    val streak: Int,
-    val currentMood: String? = null
-)
-
 data class HomeUiState(
     val userName: String = "",
     val currentDate: String = "",
@@ -61,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
             // Extract username from email (everything before @)
             val userName =
-                userEmail?.split("@")?.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "User"
+                userEmail?.split("@")?.firstOrNull()?.replaceFirstChar { it.uppercase() } ?: ""
 
             // Initialize UI state with stored mood summary if available
             _uiState.update { state ->
