@@ -29,12 +29,10 @@ android {
 
     signingConfigs {
         create("release") {
-            // These values should be provided through environment variables or a secure properties file
-            // For this example, we're using placeholder values
-            storeFile = file("keystore/release.keystore")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "keystore_password"
-            keyAlias = System.getenv("KEY_ALIAS") ?: "key_alias"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: "key_password"
+            storeFile = file("keystore/release.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
