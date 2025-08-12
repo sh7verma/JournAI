@@ -134,7 +134,6 @@ dependencies {
     implementation(libs.jakewharton.timber)
 
     /*Room database*/
-    annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
