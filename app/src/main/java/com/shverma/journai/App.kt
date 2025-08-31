@@ -1,6 +1,7 @@
 package com.shverma.journai
 
 import android.app.Application
+import com.google.firebase.FirebaseApp
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.shverma.journai.utils.GlobalResourceProvider
 import dagger.hilt.android.HiltAndroidApp
@@ -13,5 +14,6 @@ class App : Application(){
         super.onCreate()
         AndroidThreeTen.init(this)
         GlobalResourceProvider.init(this)
+        FirebaseApp.initializeApp(this)
     }
 }
