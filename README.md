@@ -23,16 +23,6 @@ JournAI is an AI-powered personal journaling app designed to help users improve 
 - **Material 3** design system  
 - **SafeApiCall + Resource** pattern for network handling  
 
-## 🗺 Roadmap
-
-- [x] Basic journal entry screen  
-- [x] AI feedback integration  
-- [x] Sentiment analysis  
-- [ ] Local export / backup  
-- [ ] Cloud sync  
-- [ ] Dark mode  
-- [ ] More advanced writing prompts  
-
 ## ❤️ Acknowledgements
 
 - OpenAI GPT / Gemini for AI feedback  
