@@ -13,3 +13,20 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Keystore files
+*.jks
+*.keystore
+*.b64
+release.jks.b64
+app/keystore/
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# API keys and secrets
+*.properties.secret
+apikey.properties
+
+# Release files
+app/release/

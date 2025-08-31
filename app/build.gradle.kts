@@ -7,14 +7,16 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinKapt)
     alias(libs.plugins.room)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
-    namespace = "com.shverma.app"
+    namespace = "com.shverma.journai"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.shverma.app"
+        applicationId = "com.shverma.journai"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -82,6 +84,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.org.jetbrains.kotlinx.coroutines.android)
     implementation(libs.androidx.multidex)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.crashlytics)
 
     implementation(libs.kotlinx.serialization.json)
 

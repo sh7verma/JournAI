@@ -47,7 +47,7 @@
 }
 
 # Keep model classes
--keep class com.shverma.app.data.network.model.** { *; }
+-keep class com.shverma.journai.data.network.model.** { *; }
 
 # Dagger Hilt
 -keepclassmembers,allowobfuscation class * {
