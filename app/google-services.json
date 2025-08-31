@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "113698131570",
+    "project_id": "journai-4ef44",
+    "storage_bucket": "journai-4ef44.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113698131570:android:c144e5cb09c9701c127ceb",
+        "android_client_info": {
+          "package_name": "com.shverma.journai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbbONCWogIDrYbBfiyg_Mpjm-tFeSrFp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
