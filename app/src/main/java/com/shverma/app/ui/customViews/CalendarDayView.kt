@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
+import com.shverma.app.ui.theme.dimensions
 import org.threeten.bp.LocalDate
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
@@ -112,10 +113,12 @@ fun CalendarWeekRow(
     modifier: Modifier = Modifier,
     onDateSelected: (OffsetDateTime) -> Unit
 ) {
+    val dims = dimensions()
+
     Row(
         modifier = modifier
             .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = dims.spacingSmall)
             .fillMaxSize()
     ) {
         days.forEach { day ->
@@ -123,14 +126,14 @@ fun CalendarWeekRow(
             val isSpecial = specialDate != null && day.date.toLocalDate() == specialDate.toLocalDate()
             Box(
                 modifier = Modifier
-                    .padding(end = 12.dp)
+                    .padding(end = dims.spacingMedium)
                     .fillMaxSize()
             ) {
                 Column(
                     modifier = Modifier
-                        .width(70.dp)
-                        .height(88.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .width(dims.spacingXXXLarge + dims.spacingXXLarge) // 80dp scaled
+                        .height(dims.spacingXXXLarge + dims.spacingXXXLarge) // 96dp scaled
+                        .clip(RoundedCornerShape(dims.radiusMedium))
                         .background(
                             when {
                                 isSelected -> JournAIPink
@@ -138,7 +141,7 @@ fun CalendarWeekRow(
                             }
                         )
                         .clickable { onDateSelected(day.date) }
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = dims.spacingSmall + dims.spacingXXSmall),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -155,12 +158,12 @@ fun CalendarWeekRow(
                         ),
                         color = JournAIBrown
                     )
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(dims.spacingXXSmall))
                     Icon(
                         imageVector = day.moodIcon ?: Icons.Outlined.SentimentSatisfied,
                         contentDescription = day.moodLabel.ifEmpty { "Neutral" },
                         tint = JournAIBrown,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier.size(dims.iconSizeMedium + dims.spacingXXSmall)
                     )
                 }
                 // Pink ring for "special" day, but not main selected
@@ -168,10 +171,10 @@ fun CalendarWeekRow(
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopCenter)
-                            .offset(y = 36.dp)
-                            .size(30.dp)
+                            .offset(y = (dims.spacingXXLarge + dims.spacingSmall).value.dp)
+                            .size(dims.spacingXLarge + dims.spacingSmall)
                             .border(
-                                width = 2.dp,
+                                width = dims.elevationMedium,
                                 color = Color(0xFFEB43AD), // Your ring color
                                 shape = CircleShape
                             )

@@ -38,6 +38,7 @@ import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAIPink
+import com.shverma.app.ui.theme.dimensions
 import com.shverma.app.utils.UiEvent
 import com.shverma.app.utils.toIsoString
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -78,28 +79,30 @@ fun HomeScreen(
         }
     }
 
+    val dims = dimensions()
+
     Column(
         modifier = Modifier
             .background(JournAIBackground)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = dims.spacingRegular)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         // Header
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dims.spacingSmall + dims.spacingXXSmall))
         Text(
             text = context.getString(R.string.good_morning, state.userName),
             style = AppTypography.titleLarge,
             color = JournAIBrown
         )
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(dims.spacingXXSmall))
         Text(
             text = state.currentDate,
             style = AppTypography.bodyMedium,
             color = JournAIBrown
         )
 
-        Spacer(modifier = Modifier.height(22.dp))
+        Spacer(modifier = Modifier.height(dims.spacingXLarge + dims.spacingXXSmall))
 
         // Today's Prompt
         PromptCard(
@@ -109,12 +112,12 @@ fun HomeScreen(
                 .fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(dims.spacingLarge + dims.spacingXXSmall))
 
         // Buttons side by side
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(dims.spacingRegular)
         ) {
             // Start Writing
             JournButton(
@@ -133,11 +136,11 @@ fun HomeScreen(
                 backgroundColor = JournAIPink,
                 contentColor = JournAIBrown,
                 modifier = Modifier.weight(1f),
-                onClick = { onStartWriting() }
+                onClick = { viewModel.onVoiceEntryClick() }
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(dims.spacingMedium))
 
         // Weekly Mood Summary Card
         MoodSummaryCard(
@@ -148,7 +151,7 @@ fun HomeScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
         // Recent Entries
         Text(
@@ -156,7 +159,7 @@ fun HomeScreen(
             style = AppTypography.titleMedium,
             color = JournAIBrown
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(dims.spacingSmall + dims.spacingXXSmall))
 
         if (state.recentEntries.isEmpty()) {
             Text(
@@ -173,9 +176,9 @@ fun HomeScreen(
                         onClickEntry(it.toIsoString())
                     }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dims.spacingMedium))
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(dims.spacingRegular))
     }
 }

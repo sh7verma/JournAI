@@ -167,4 +167,8 @@ class HomeViewModel @Inject constructor(
             uiEvent.send(event)
         }
     }
+
+    fun onVoiceEntryClick() {
+        sendUiEvent(UiEvent.ShowMessage("Voice entry coming soon!"))
+    }
 }

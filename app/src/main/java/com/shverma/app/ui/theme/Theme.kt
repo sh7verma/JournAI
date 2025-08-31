@@ -8,6 +8,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -53,9 +54,20 @@ fun AppTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = AppTypography,
-        content = content
-    )
+    // Get responsive dimensions based on screen size
+    val screenSizeClass = getScreenSizeClass()
+    val responsiveDimensions = Dimensions(screenSizeClass = screenSizeClass)
+
+    // Get responsive typography based on screen size
+    val responsiveTypography = createResponsiveTypography()
+
+    CompositionLocalProvider(
+        LocalDimensions provides responsiveDimensions
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = responsiveTypography,
+            content = content
+        )
+    }
 }

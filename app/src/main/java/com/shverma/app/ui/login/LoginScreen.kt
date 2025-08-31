@@ -50,6 +50,7 @@ import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
+import com.shverma.app.ui.theme.dimensions
 
 @Composable
 fun LoginScreen(
@@ -59,6 +60,7 @@ fun LoginScreen(
     val context = LocalContext.current
     val uiState = loginViewModel.uiState.collectAsStateWithLifecycle().value
 
+    val dims = dimensions()
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -67,7 +69,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(22.dp),
+                .padding(dims.spacingXLarge),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -78,7 +80,7 @@ fun LoginScreen(
                 // Circular card with journaling/book icon
                 Box(
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(dims.buttonHeight + dims.spacingXLarge)
                         .clip(CircleShape)
                         .background(JournAILightPeach),
                     contentAlignment = Alignment.Center
@@ -86,12 +88,12 @@ fun LoginScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_journal_book),
                         contentDescription = "JournAI Logo",
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.size(dims.iconSizeLarge + dims.iconSizeMedium),
                         tint = JournAIBrown
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
                 // Title
                 Text(
@@ -103,7 +105,7 @@ fun LoginScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dims.spacingSmall))
 
                 // Subtitle
                 Text(
@@ -119,7 +121,7 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(dims.spacingXXLarge)
             ) {
                 // Email field
                 OutlinedTextField(
@@ -135,7 +137,7 @@ fun LoginScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(dims.radiusLarge),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = JournAIBrown,
                         unfocusedBorderColor = JournAIBrown.copy(alpha = 0.5f),
@@ -145,7 +147,7 @@ fun LoginScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(dims.spacingRegular))
 
                 // Password field with show/hide toggle
                 OutlinedTextField(
@@ -176,7 +178,7 @@ fun LoginScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(dims.radiusLarge),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = JournAIBrown,
                         unfocusedBorderColor = JournAIBrown.copy(alpha = 0.5f),
@@ -186,25 +188,25 @@ fun LoginScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dims.spacingSmall))
 
                 // Forgot password link
-                Text(
-                    text = stringResource(R.string.forgot_password),
-                    style = AppTypography.labelLarge,
-                    color = JournAIBrown,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { /* TODO: Implement forgot password functionality */ }
-                )
+//                Text(
+//                    text = stringResource(R.string.forgot_password),
+//                    style = AppTypography.labelLarge,
+//                    color = JournAIBrown,
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clickable { /* TODO: Implement forgot password functionality */ }
+//                )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
                 // Login and Sign Up buttons vertically
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(dims.spacingRegular)
                 ) {
                     // Login button
                     JournButton(
@@ -240,7 +242,7 @@ fun LoginScreen(
                 }
 
                 if (uiState.error != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(dims.spacingSmall))
                     Text(
                         text = uiState.error ?: "",
                         style = AppTypography.bodyMedium,
@@ -249,105 +251,105 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
                 // Divider with "or continue with" text
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    DottedLineSeparator(
-                        modifier = Modifier.weight(1f),
-                        color = JournAIBrown.copy(alpha = 0.5f)
-                    )
-                    Text(
-                        text = stringResource(R.string.or_continue_with),
-                        style = AppTypography.bodyMedium,
-                        color = JournAIBrown,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                    DottedLineSeparator(
-                        modifier = Modifier.weight(1f),
-                        color = JournAIBrown.copy(alpha = 0.5f)
-                    )
-                }
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    DottedLineSeparator(
+//                        modifier = Modifier.weight(1f),
+//                        color = JournAIBrown.copy(alpha = 0.5f)
+//                    )
+//                    Text(
+//                        text = stringResource(R.string.or_continue_with),
+//                        style = AppTypography.bodyMedium,
+//                        color = JournAIBrown,
+//                        modifier = Modifier.padding(horizontal = dims.spacingRegular)
+//                    )
+//                    DottedLineSeparator(
+//                        modifier = Modifier.weight(1f),
+//                        color = JournAIBrown.copy(alpha = 0.5f)
+//                    )
+//                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
                 // Social login options
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(dims.spacingRegular)
                 ) {
                     // Google login button
-                    if (uiState.isLoading && uiState.isSocialLoginInProgress && uiState.socialLoginType == SocialLoginType.GOOGLE) {
+//                    if (uiState.isLoading && uiState.isSocialLoginInProgress && uiState.socialLoginType == SocialLoginType.GOOGLE) {
                         // Show loading indicator for Google login
-                        JournButton(
-                            text = "",
-                            iconResId = R.drawable.ic_google,
-                            backgroundColor = Color.White,
-                            contentColor = JournAIBrown,
-                            modifier = Modifier
-                                .weight(1f),
-                            isLoading = true,
-                            onClick = { }
-                        )
-                    } else {
+//                        JournButton(
+//                            text = "",
+//                            iconResId = R.drawable.ic_google,
+//                            backgroundColor = Color.White,
+//                            contentColor = JournAIBrown,
+//                            modifier = Modifier
+//                                .weight(1f),
+//                            isLoading = true,
+//                            onClick = { }
+//                        )
+//                    } else {
                         // Show Google login button
-                        JournButton(
-                            text = "",
-                            iconResId = R.drawable.ic_google,
-                            backgroundColor = Color.White,
-                            contentColor = JournAIBrown,
-                            modifier = Modifier
-                                .weight(1f),
-                            onClick = { 
-                                if (!uiState.isLoading) {
-                                    loginViewModel.loginWithGoogle {
-                                        onLoginSuccess()
-                                    }
-                                }
-                            }
-                        )
-                    }
+//                        JournButton(
+//                            text = "",
+//                            iconResId = R.drawable.ic_google,
+//                            backgroundColor = Color.White,
+//                            contentColor = JournAIBrown,
+//                            modifier = Modifier
+//                                .weight(1f),
+//                            onClick = {
+//                                if (!uiState.isLoading) {
+//                                    loginViewModel.loginWithGoogle {
+//                                        onLoginSuccess()
+//                                    }
+//                                }
+//                            }
+//                        )
+//                    }
 
                     // Apple login button
-                    if (uiState.isLoading && uiState.isSocialLoginInProgress && uiState.socialLoginType == SocialLoginType.APPLE) {
+//                    if (uiState.isLoading && uiState.isSocialLoginInProgress && uiState.socialLoginType == SocialLoginType.APPLE) {
                         // Show loading indicator for Apple login
-                        JournButton(
-                            text = "",
-                            iconResId = R.drawable.ic_apple,
-                            backgroundColor = Color.White,
-                            contentColor = JournAIBrown,
-                            modifier = Modifier
-                                .weight(1f),
-                            isLoading = true,
-                            onClick = { }
-                        )
-                    } else {
+//                        JournButton(
+//                            text = "",
+//                            iconResId = R.drawable.ic_apple,
+//                            backgroundColor = Color.White,
+//                            contentColor = JournAIBrown,
+//                            modifier = Modifier
+//                                .weight(1f),
+//                            isLoading = true,
+//                            onClick = { }
+//                        )
+//                    } else {
                         // Show Apple login button
-                        JournButton(
-                            text = "",
-                            iconResId = R.drawable.ic_apple,
-                            backgroundColor = Color.White,
-                            contentColor = JournAIBrown,
-                            modifier = Modifier
-                                .weight(1f),
-                            onClick = { 
-                                if (!uiState.isLoading) {
-                                    loginViewModel.loginWithApple {
-                                        onLoginSuccess()
-                                    }
-                                }
-                            }
-                        )
-                    }
+//                        JournButton(
+//                            text = "",
+//                            iconResId = R.drawable.ic_apple,
+//                            backgroundColor = Color.White,
+//                            contentColor = JournAIBrown,
+//                            modifier = Modifier
+//                                .weight(1f),
+//                            onClick = {
+//                                if (!uiState.isLoading) {
+//                                    loginViewModel.loginWithApple {
+//                                        onLoginSuccess()
+//                                    }
+//                                }
+//                            }
+//                        )
+//                    }
                 }
             }
 
             // Bottom section with footer text
             Box(
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = dims.spacingRegular)
             ) {
                 Text(
                     text = stringResource(R.string.motivational_quote),

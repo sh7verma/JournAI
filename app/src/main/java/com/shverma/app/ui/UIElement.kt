@@ -42,6 +42,7 @@ import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
 import com.shverma.app.ui.theme.JournAIPink
 import com.shverma.app.ui.theme.JournAIYellow
+import com.shverma.app.ui.theme.dimensions
 import com.shverma.app.utils.formatWrittenAt
 import org.threeten.bp.OffsetDateTime
 
@@ -51,11 +52,13 @@ fun DottedLineSeparator(
     color: Color = JournAIBrown.copy(alpha = 0.3f),
     strokeWidth: Float = 2f
 ) {
+    val dims = dimensions()
+
     Spacer(
         modifier = modifier
             .fillMaxWidth()
-            .height(1.dp)
-            .padding(horizontal = 4.dp)
+            .height(dims.elevationSmall)
+            .padding(horizontal = dims.spacingXSmall)
             .drawBehind {
                 val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                 drawLine(
@@ -81,10 +84,11 @@ fun JournalCard(
 ) {
     // Try to map the mood string to a Mood enum
     val mood = getMoodFromString(entry.mood)
+    val dims = dimensions()
 
     Card(
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, JournAIBrown.copy(alpha = 0.2f)),
+        shape = RoundedCornerShape(dims.radiusLarge),
+        border = BorderStroke(dims.elevationSmall, JournAIBrown.copy(alpha = 0.2f)),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
@@ -92,7 +96,7 @@ fun JournalCard(
             .fillMaxWidth()
             .clickable { onClick(entry.created_at) }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(dims.spacingRegular)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,9 +115,9 @@ fun JournalCard(
                         imageVector = mood?.icon ?: Icons.Outlined.SentimentSatisfied,
                         contentDescription = mood?.label ?: entry.mood,
                         tint = JournAIBrown,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(dims.iconSizeSmall)
                     )
-                    Spacer(Modifier.width(4.dp))
+                    Spacer(Modifier.width(dims.spacingXXSmall))
                     Text(
                         text = mood?.label ?: entry.mood.ifBlank { stringResource(R.string.default_mood) },
                         style = AppTypography.labelLarge,
@@ -121,7 +125,7 @@ fun JournalCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dims.spacingSmall))
             Text(
                 text = entry.text.ifBlank { stringResource(R.string.no_preview_available) },
                 style = AppTypography.bodyLarge,
@@ -144,24 +148,26 @@ fun JournButton(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
+    val dims = dimensions()
+
     Button(
         onClick = onClick,
         enabled = enabled && !isLoading,
         modifier = modifier
             .fillMaxWidth()
-            .height(54.dp), // matches your Figma
+            .height(dims.buttonHeight),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             contentColor = contentColor
         ),
-        shape = RoundedCornerShape(16.dp) // matches your design
+        shape = RoundedCornerShape(dims.radiusLarge)
     ) {
         if (isLoading) {
             // Show loading indicator
             CircularProgressIndicator(
                 color = contentColor,
-                modifier = Modifier.size(24.dp),
-                strokeWidth = 2.dp
+                modifier = Modifier.size(dims.iconSizeLarge),
+                strokeWidth = dims.elevationMedium
             )
         } else {
             // Show normal content
@@ -169,9 +175,9 @@ fun JournButton(
                 Icon(
                     painter = painterResource(id = iconResId),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(dims.iconSizeMedium)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(dims.spacingSmall))
             }
             Text(text = text, style = AppTypography.labelLarge)
         }
@@ -185,21 +191,23 @@ fun PromptCard(
     content: String,
     modifier: Modifier = Modifier
 ) {
+    val dims = dimensions()
+
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(dims.radiusLarge),
         colors = CardDefaults.cardColors(
             containerColor = JournAILightPeach
         ),
         modifier = modifier
             .fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(dims.spacingRegular)) {
             Text(
                 text = title,
                 style = AppTypography.labelLarge,
                 color = JournAIBrown
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dims.spacingSmall))
             Text(
                 text = content,
                 style = AppTypography.bodyMedium.copy(
@@ -232,8 +240,10 @@ fun MoodSummaryCard(
         Icons.Outlined.SentimentSatisfied
     }
 
+    val dims = dimensions()
+
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(dims.radiusLarge),
         colors = CardDefaults.cardColors(
             containerColor = JournAIYellow
         ),
@@ -241,13 +251,13 @@ fun MoodSummaryCard(
             .fillMaxWidth()
             .clickable { onClick() }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(dims.spacingRegular)) {
             Text(
                 text = stringResource(R.string.weekly_mood_summary),
                 style = AppTypography.titleMedium,
                 color = JournAIBrown
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(dims.spacingSmall))
 
             Text(
                 text = "🔥 $streakText",
@@ -262,9 +272,9 @@ fun MoodSummaryCard(
                     imageVector = moodIcon,
                     contentDescription = mood ?: "",
                     tint = JournAIBrown,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(dims.iconSizeMedium)
                 )
-                Spacer(Modifier.width(4.dp))
+                Spacer(Modifier.width(dims.spacingXXSmall))
                 Text(
                     text = "↑ $displayTrend",
                     style = AppTypography.bodyLarge,
@@ -285,16 +295,17 @@ fun DetailedJournalCard(
 ) {
     // Try to map the mood string to a Mood enum
     val mood = getMoodFromString(entry.mood)
+    val dims = dimensions()
 
     Card(
-        shape = RoundedCornerShape(18.dp),
+        shape = RoundedCornerShape(dims.radiusMedium),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 2.dp, bottom = 12.dp),
+            .padding(top = dims.spacingXXSmall, bottom = dims.spacingMedium),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = dims.elevationSmall)
     ) {
-        Column(Modifier.padding(18.dp)) {
+        Column(Modifier.padding(dims.spacingLarge)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -303,9 +314,9 @@ fun DetailedJournalCard(
                     imageVector = mood?.icon ?: Icons.Outlined.SentimentSatisfied,
                     contentDescription = mood?.label ?: "",
                     tint = JournAIBrown,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(dims.iconSizeLarge)
                 )
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(dims.spacingSmall))
                 Text(
                     text = mood?.label ?: entry.mood,
                     style = AppTypography.labelLarge,
@@ -319,7 +330,7 @@ fun DetailedJournalCard(
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(dims.spacingMedium))
 
             Text(
                 text = entry.text,
@@ -327,13 +338,13 @@ fun DetailedJournalCard(
                 color = JournAIBrown
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(dims.spacingRegular))
 
             if (!tips.isNullOrEmpty()) {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dims.spacingSmall))
                 // Custom dotted line separator
                 DottedLineSeparator()
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dims.spacingSmall))
             }
 
             // Display tips in italics if available
@@ -344,7 +355,7 @@ fun DetailedJournalCard(
                         style = AppTypography.labelLarge,
                         color = JournAIBrown
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(dims.spacingSmall))
                     tips.forEach { tip ->
                         Text(
                             text = "• $tip",
@@ -353,29 +364,29 @@ fun DetailedJournalCard(
                             ),
                             color = JournAIBrown
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(dims.spacingXXSmall))
                     }
                 }
             }
 
             // Add dotted line between tips and grammar correction
             if (!grammarCorrection.isNullOrEmpty()) {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dims.spacingSmall))
                 // Custom dotted line separator
                 DottedLineSeparator()
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(dims.spacingSmall))
             }
 
             // Display grammar correction if available
             if (!grammarCorrection.isNullOrEmpty()) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(dims.spacingRegular))
                 Column {
                     Text(
                         text = stringResource(R.string.grammar_correction),
                         style = AppTypography.labelLarge,
                         color = JournAIBrown
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(dims.spacingSmall))
                     Text(
                         text = grammarCorrection,
                         style = AppTypography.bodyMedium.copy(
@@ -388,7 +399,7 @@ fun DetailedJournalCard(
 
             // Button for AI Writing Tips
             if (onGetAiTips != null && tips.isNullOrEmpty()) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(dims.spacingRegular))
                 JournButton(
                     text = stringResource(R.string.get_ai_writing_tips),
                     iconResId = R.drawable.ic_bulb,
@@ -400,7 +411,7 @@ fun DetailedJournalCard(
 
             // Button for Grammar Correction
             if (!tips.isNullOrEmpty() && onGetGrammarCorrection != null && grammarCorrection.isNullOrEmpty()) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(dims.spacingRegular))
                 JournButton(
                     text = stringResource(R.string.get_grammar_correction),
                     iconResId = R.drawable.ic_bulb,

@@ -56,11 +56,10 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var dataStoreHelper: DataStoreHelper
 
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        // Removed portrait orientation lock to support responsive layouts
         WindowCompat.getInsetsController(window, window.decorView).apply {
             isAppearanceLightStatusBars = true
         }
@@ -124,7 +123,7 @@ fun AppNavigation(
                         val itemRoute = when (item.route) {
                             is Routes.JournAIHomeRoute -> Routes.JournAIHomeRoute::class.qualifiedName
                             is Routes.JournalRoute -> Routes.JournalRoute::class.qualifiedName
-//                            is Routes.InsightsRoute -> Routes.InsightsRoute::class.qualifiedName
+                            is Routes.InsightsRoute -> Routes.InsightsRoute::class.qualifiedName
                             is Routes.ProfileRoute -> Routes.ProfileRoute::class.qualifiedName
                             else -> item.route.toString()
                         }
@@ -188,7 +187,7 @@ fun AppNavigation(
                 )
             }
             composable<Routes.InsightsRoute> {
-                PlaceholderScreen("Insights")
+                PlaceholderScreen("Insights (Coming Soon)")
             }
             composable<Routes.ProfileRoute> {
                 com.shverma.app.ui.profile.ProfileScreen(
@@ -242,11 +241,11 @@ private fun navItems(): List<BottomNavItem> = listOf(
         label = "Journal",
         icon = Icons.Filled.Book
     ),
-//    BottomNavItem(
-//        route = Routes.InsightsRoute,
-//        label = "Insights",
-//        icon = Icons.Filled.BarChart
-//    ),
+    BottomNavItem(
+        route = Routes.InsightsRoute,
+        label = "Insights",
+        icon = Icons.Filled.BarChart
+    ),
     BottomNavItem(
         route = Routes.ProfileRoute,
         label = "Profile",

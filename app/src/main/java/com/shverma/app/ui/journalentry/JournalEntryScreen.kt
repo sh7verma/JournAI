@@ -43,6 +43,7 @@ import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
 import com.shverma.app.ui.theme.JournAILightPeach
+import com.shverma.app.ui.theme.dimensions
 import com.shverma.app.utils.UiEvent
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -71,28 +72,29 @@ fun JournalEntryScreen(
         }
     }
 
+    val dims = dimensions()
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(JournAIBackground)
-            .padding(16.dp),
+            .padding(dims.spacingRegular),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Prompt Card
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(dims.radiusLarge),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 20.dp),
+                .padding(bottom = dims.spacingLarge),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
-            Column(Modifier.padding(16.dp)) {
+            Column(Modifier.padding(dims.spacingRegular)) {
                 Text(
                     text = stringResource(R.string.todays_prompt_quote),
                     style = AppTypography.labelLarge,
                     color = JournAIBrown
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dims.spacingSmall))
                 Text(
                     text = state.prompt,
                     style = AppTypography.bodyMedium.copy(
@@ -105,13 +107,13 @@ fun JournalEntryScreen(
 
         // Entry Text Field
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(dims.radiusLarge),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             colors = CardDefaults.cardColors(containerColor = JournAIBackground)
         ) {
-            Box(Modifier.padding(20.dp)) {
+            Box(Modifier.padding(dims.spacingLarge)) {
                 BasicTextField(
                     value = state.entryText,
                     onValueChange = { journalEntryViewModel.onTextChange(it) },
@@ -131,18 +133,18 @@ fun JournalEntryScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(dims.spacingRegular))
 
         // Mood Selector
         Card(
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(dims.radiusMedium),
+            elevation = CardDefaults.cardElevation(defaultElevation = dims.elevationLarge),
             colors = CardDefaults.cardColors(containerColor = JournAILightPeach)
         ) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(dims.spacingRegular)
             ) {
                 // Title Row with Analyze Button
                 Row(
@@ -171,7 +173,7 @@ fun JournalEntryScreen(
                                 painter = painterResource(R.drawable.ic_bulb),
                                 contentDescription = "Analyze Mood",
                                 tint = JournAILightPeach,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(dims.iconSizeMedium)
                             )
                         }
                     }
@@ -202,15 +204,15 @@ fun JournalEntryScreen(
                                 .clip(CircleShape)
                                 .background(bgColor)
                                 .clickable { journalEntryViewModel.onMoodSelected(mood) }
-                                .padding(8.dp)
+                                .padding(dims.spacingSmall)
                         ) {
                             Icon(
                                 imageVector = mood.icon,
                                 contentDescription = mood.label,
                                 tint = iconColor,
-                                modifier = Modifier.size(36.dp)
+                                modifier = Modifier.size(dims.iconSizeLarge + dims.iconSizeSmall)
                             )
-                            Spacer(Modifier.height(4.dp))
+                            Spacer(Modifier.height(dims.spacingXXSmall))
                             Text(
                                 text = mood.label,
                                 style = AppTypography.bodySmall,
@@ -222,20 +224,20 @@ fun JournalEntryScreen(
 
                 // Mood analysis card (if available)
                 if (state.sentimentAnalysis != null) {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(dims.spacingXXLarge))
                     Card(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(dims.radiusLarge),
                         colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = dims.elevationMedium),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(Modifier.padding(16.dp)) {
+                        Column(Modifier.padding(dims.spacingRegular)) {
                             Text(
                                 text = "Mood Analysis",
                                 style = AppTypography.labelLarge,
                                 color = JournAIBrown
                             )
-                            Spacer(Modifier.height(8.dp))
+                            Spacer(Modifier.height(dims.spacingSmall))
                             Text(
                                 text = state.sentimentAnalysis,
                                 style = AppTypography.bodyMedium.copy(
@@ -251,7 +253,7 @@ fun JournalEntryScreen(
 
 
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(dims.spacingLarge))
 
         // Bottom Row: Edit, Save, Voice
         Row(
@@ -263,26 +265,26 @@ fun JournalEntryScreen(
             /* IconButton(
                  onClick = {}*//*onEditClick*//*,
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(dims.buttonHeight)
                     .background(JournAILightPeach, CircleShape)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_write), // Use your icon
                     contentDescription = "Edit",
                     tint = JournAIBrown,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(dims.iconSizeLarge + dims.spacingXXSmall)
                 )
             }*/
 
             Button(
                 onClick = { journalEntryViewModel.createJournalEntry() },
-                shape = RoundedCornerShape(32.dp),
+                shape = RoundedCornerShape(dims.radiusXLarge),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = JournAIBrown,
                     contentColor = Color.White
                 ),
                 modifier = Modifier
-                    .height(54.dp)
+                    .height(dims.buttonHeight)
                     .width(180.dp)
             ) {
                 Text("Save Entry", style = AppTypography.labelLarge)
@@ -291,18 +293,18 @@ fun JournalEntryScreen(
             /* IconButton(
                  onClick = {}*//*onVoiceClick*//*,
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(dims.buttonHeight)
                     .background(JournAILightPeach, CircleShape)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_record), // Use your icon
                     contentDescription = "Voice Entry",
                     tint = JournAIBrown,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(dims.iconSizeLarge + dims.spacingXXSmall)
                 )
             }*/
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(dims.spacingSmall))
     }
 }

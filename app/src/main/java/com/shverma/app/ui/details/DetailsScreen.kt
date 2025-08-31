@@ -35,6 +35,7 @@ import com.shverma.app.ui.customViews.generateCalendarDays
 import com.shverma.app.ui.theme.AppTypography
 import com.shverma.app.ui.theme.JournAIBackground
 import com.shverma.app.ui.theme.JournAIBrown
+import com.shverma.app.ui.theme.dimensions
 import com.shverma.app.utils.UiEvent
 import com.shverma.app.utils.toOffsetDateTime
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -76,15 +77,16 @@ fun DetailScreen(
         generateCalendarDays(startDate, endDate, moodMap)
     }
     // --- Main Layout ---
+    val dims = dimensions()
     Column(
         modifier = Modifier
             .background(JournAIBackground)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = dims.spacingRegular)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
         // Back button & title
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(dims.spacingMedium))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -97,7 +99,7 @@ fun DetailScreen(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(dims.spacingMedium))
 
         // Calendar
         CalendarWeekRow(
@@ -108,19 +110,19 @@ fun DetailScreen(
             }
         )
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(dims.spacingLarge))
 
         // Multiple Journal Entry Cards
         if (state.journalEntries.isEmpty()) {
             Card(
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(dims.radiusLarge),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 2.dp),
+                    .padding(top = dims.spacingXXSmall),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = dims.elevationSmall)
             ) {
-                Column(Modifier.padding(18.dp)) {
+                Column(Modifier.padding(dims.spacingRegular)) {
                     Text(
                         text = context.getString(R.string.no_entry_for_date),
                         style = AppTypography.bodyLarge,
@@ -140,6 +142,6 @@ fun DetailScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(22.dp))
+        Spacer(modifier = Modifier.height(dims.spacingXLarge))
     }
 }

@@ -50,13 +50,11 @@ private suspend fun <T : Any> handleApiResponse(
             }
         }
 
-        401, 400 -> {
+        else -> {
             handleBadRequest(response)
         }
 
-        else -> {
-            Resource.Error("${response.code()} ${getGlobalString(R.string.error_unknown)}")
-        }
+
     }
 }
 

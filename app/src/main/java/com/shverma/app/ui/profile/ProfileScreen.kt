@@ -35,6 +35,7 @@ import com.shverma.app.R
 import com.shverma.app.ui.JournButton
 import com.shverma.app.ui.MoodSummaryCard
 import com.shverma.app.ui.theme.*
+import com.shverma.app.ui.theme.dimensions
 
 @Composable
 fun ProfileScreen(
@@ -44,6 +45,7 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val dims = dimensions()
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = JournAIBackground
@@ -51,16 +53,16 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(dims.spacingRegular)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
             // Profile Picture
             Box(
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(dims.buttonHeight * 2 + dims.spacingSmall)
                     .clip(CircleShape)
                     .background(JournAILightPeach),
                 contentAlignment = Alignment.Center
@@ -84,7 +86,7 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dims.spacingRegular))
 
             // User Name
             Text(
@@ -101,7 +103,7 @@ fun ProfileScreen(
                 color = Color.Gray
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
             // Streak/Mood Summary
             if (uiState.streak > 0) {
@@ -110,20 +112,20 @@ fun ProfileScreen(
                     mood = uiState.mood
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(dims.spacingXXLarge))
             }
 
             // Profile Actions Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(dims.radiusLarge),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White
                 ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = dims.elevationMedium)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(dims.spacingRegular)
                 ) {
 //                    ProfileActionItem(
 //                        icon = Icons.Outlined.Edit,
@@ -143,7 +145,7 @@ fun ProfileScreen(
                     )
 
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.padding(vertical = dims.spacingSmall),
                         thickness = DividerDefaults.Thickness, color = JournAILightPeach
                     )
 //
@@ -166,7 +168,7 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dims.spacingXXLarge))
 
             // Sign Out Button
             JournButton(
@@ -179,7 +181,7 @@ fun ProfileScreen(
                     onNavigateToLogin()
                 }
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(dims.spacingXXXLarge))
         }
     }
 }
@@ -190,21 +192,22 @@ fun ProfileActionItem(
     title: String,
     onClick: () -> Unit
 ) {
+    val dims = dimensions()
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 12.dp),
+            .padding(vertical = dims.spacingMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = title,
             tint = JournAIBrown,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(dims.iconSizeLarge)
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(dims.spacingRegular))
 
         Text(
             text = title,
@@ -218,7 +221,7 @@ fun ProfileActionItem(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = "Navigate",
             tint = JournAIBrown.copy(alpha = 0.5f),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(dims.iconSizeMedium)
         )
     }
 }
