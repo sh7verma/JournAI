@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    namespace = "com.shverma.app"
+    namespace = "com.shverma.journai"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.shverma.app"
+        applicationId = "com.shverma.journai"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
