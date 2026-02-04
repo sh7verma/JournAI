@@ -291,7 +291,9 @@ fun DetailedJournalCard(
     tips: List<String>? = null,
     grammarCorrection: String? = null,
     onGetAiTips: (() -> Unit)? = null,
-    onGetGrammarCorrection: (() -> Unit)? = null
+    onGetGrammarCorrection: (() -> Unit)? = null,
+    isLoadingTips: Boolean = false,
+    isLoadingGrammar: Boolean = false
 ) {
     // Try to map the mood string to a Mood enum
     val mood = getMoodFromString(entry.mood)
@@ -405,6 +407,7 @@ fun DetailedJournalCard(
                     iconResId = R.drawable.ic_bulb,
                     backgroundColor = JournAIPink,
                     contentColor = JournAIBrown,
+                    isLoading = isLoadingTips,
                     onClick = onGetAiTips
                 )
             }
@@ -417,6 +420,7 @@ fun DetailedJournalCard(
                     iconResId = R.drawable.ic_bulb,
                     backgroundColor = JournAIYellow,
                     contentColor = JournAIBrown,
+                    isLoading = isLoadingGrammar,
                     onClick = onGetGrammarCorrection
                 )
             }

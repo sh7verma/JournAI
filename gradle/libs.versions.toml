@@ -7,6 +7,7 @@ dagger-hilt-android-version = "2.53"
 google-devtools-ksp-version = "2.0.21-1.0.26"
 google-services = "4.4.1"
 firebase-bom = "32.7.4"
+play-services-auth = "21.0.0"
 
 coil-svg = "2.6.0"
 compose-activity-version = "1.10.1"
@@ -138,6 +139,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

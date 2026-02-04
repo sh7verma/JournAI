@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.google.firebase.auth.FirebaseAuth
 import com.shverma.journai.data.preference.DataStoreHelper
 import com.shverma.journai.ui.details.DetailScreen
 import com.shverma.journai.ui.home.HomeScreen
@@ -197,7 +198,6 @@ fun AppNavigation(
                         }
                     },
                     onNavigateToChangePassword = {
-                        navController.navigate(Routes.ChangePasswordRoute)
                     }
                 )
             }
@@ -213,14 +213,6 @@ fun AppNavigation(
                 JournalEntryScreen(
                     snackBarHostState = snackBarHostState,
                     modifier = Modifier, onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-
-            composable<Routes.ChangePasswordRoute> {
-                com.shverma.journai.ui.password.ChangePasswordScreen(
-                    onBackToLogin = {
                         navController.popBackStack()
                     }
                 )
@@ -294,6 +286,4 @@ object Routes {
     @Serializable
     object LoginRoute
 
-    @Serializable
-    object ChangePasswordRoute
 }

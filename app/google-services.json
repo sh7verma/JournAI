@@ -12,7 +12,20 @@
           "package_name": "com.shverma.journai"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "113698131570-ek4fvkg2bfim5onvf83rl6dc3k343mdm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shverma.journai",
+            "certificate_hash": "81d8eac83665286af16d062e3f04534e0f0f6094"
+          }
+        },
+        {
+          "client_id": "113698131570-4s738l4q6ernp303nj9615r2nn1ijfbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBbbONCWogIDrYbBfiyg_Mpjm-tFeSrFp4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113698131570-4s738l4q6ernp303nj9615r2nn1ijfbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

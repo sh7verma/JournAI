@@ -1,13 +1,13 @@
 package com.shverma.journai.data.repository
 
-import com.shverma.journai.utils.Resource
-import com.shverma.journai.utils.safeApiCall
-import com.shverma.journai.data.network.model.AiPromptResponse
+import com.shverma.journai.data.network.ApiService
 import com.shverma.journai.data.network.model.AiGrammarResponse
+import com.shverma.journai.data.network.model.AiPromptResponse
 import com.shverma.journai.data.network.model.AiSentimentResponse
 import com.shverma.journai.data.network.model.AiTextRequest
 import com.shverma.journai.data.network.model.AiTipsResponse
-import com.shverma.journai.data.network.ApiService
+import com.shverma.journai.utils.Resource
+import com.shverma.journai.utils.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 

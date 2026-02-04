@@ -1,6 +1,9 @@
 package com.shverma.journai.di
 
 import android.content.Context
+import androidx.room.Room
+import com.shverma.journai.data.local.AppDatabase
+import com.shverma.journai.data.local.dao.JournalDao
 import com.shverma.journai.data.repository.AiRepository
 import com.shverma.journai.data.repository.AiRepositoryImpl
 import com.shverma.journai.data.repository.AuthRepository
@@ -34,6 +37,22 @@ object DataModule {
     @Provides
     @Singleton
     fun provideDataStoreHelper(@ApplicationContext context: Context) = DataStoreHelper(context)
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "journai_database"
+        ).fallbackToDestructiveMigration().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideJournalDao(appDatabase: AppDatabase): JournalDao {
+        return appDatabase.journalDao()
+    }
 }
 
 

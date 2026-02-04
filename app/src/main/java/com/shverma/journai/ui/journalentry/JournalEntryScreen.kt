@@ -81,27 +81,29 @@ fun JournalEntryScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Prompt Card
-        Card(
-            shape = RoundedCornerShape(dims.radiusLarge),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = dims.spacingLarge),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            Column(Modifier.padding(dims.spacingRegular)) {
-                Text(
-                    text = stringResource(R.string.todays_prompt_quote),
-                    style = AppTypography.labelLarge,
-                    color = JournAIBrown
-                )
-                Spacer(modifier = Modifier.height(dims.spacingSmall))
-                Text(
-                    text = state.prompt,
-                    style = AppTypography.bodyMedium.copy(
-                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                    ),
-                    color = JournAIBrown
-                )
+        if (state.prompt.isNotEmpty()) {
+            Card(
+                shape = RoundedCornerShape(dims.radiusLarge),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dims.spacingLarge),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Column(Modifier.padding(dims.spacingRegular)) {
+                    Text(
+                        text = stringResource(R.string.todays_prompt_quote),
+                        style = AppTypography.labelLarge,
+                        color = JournAIBrown
+                    )
+                    Spacer(modifier = Modifier.height(dims.spacingSmall))
+                    Text(
+                        text = state.prompt,
+                        style = AppTypography.bodyMedium.copy(
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                        ),
+                        color = JournAIBrown
+                    )
+                }
             }
         }
 

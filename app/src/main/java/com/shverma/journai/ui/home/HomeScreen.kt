@@ -105,14 +105,16 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(dims.spacingXLarge + dims.spacingXXSmall))
 
         // Today's Prompt
-        PromptCard(
-            title = context.getString(R.string.todays_prompt_quote),
-            content = state.prompt,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+        if (state.prompt.isNotEmpty()) {
+            PromptCard(
+                title = context.getString(R.string.todays_prompt_quote),
+                content = state.prompt,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(dims.spacingLarge + dims.spacingXXSmall))
+            Spacer(modifier = Modifier.height(dims.spacingLarge + dims.spacingXXSmall))
+        }
 
         // Buttons side by side
         Row(

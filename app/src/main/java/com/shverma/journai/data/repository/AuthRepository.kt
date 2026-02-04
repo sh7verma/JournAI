@@ -1,69 +1,65 @@
 package com.shverma.journai.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.shverma.journai.data.network.ApiService
-import com.shverma.journai.data.network.model.ChangePasswordRequest
-import com.shverma.journai.data.network.model.LoginRequest
-import com.shverma.journai.data.network.model.RegisterRequest
 import com.shverma.journai.data.network.model.UserResponse
 import com.shverma.journai.data.preference.DataStoreHelper
 import com.shverma.journai.utils.Resource
-import com.shverma.journai.utils.safeApiCall
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 interface AuthRepository {
-    suspend fun login(email: String, password: String): Resource<UserResponse>
-    suspend fun register(email: String, password: String): Resource<UserResponse>
-    suspend fun changePassword(currentPassword: String, newPassword: String): Resource<Unit>
+    suspend fun signInWithGoogle(idToken: String): Resource<UserResponse>
 }
 
 class AuthRepositoryImpl @Inject constructor(
-    private val apiService: ApiService,
-    private val journAiDataStore: DataStoreHelper
+    private val journAiDataStore: DataStoreHelper,
+    private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
-    override suspend fun login(email: String, password: String): Resource<UserResponse> {
-        val result = safeApiCall(
-            dispatcher = Dispatchers.IO,
-            apiCall = { apiService.login(LoginRequest(email, password)) }
-        )
-        if (result is Resource.Success && result.data != null) {
-            journAiDataStore.saveUserSession(
-                accessToken = result.data.access_token,
-                tokenType = result.data.token_type,
-                userId = result.data.id,
-                userEmail = result.data.email,
+
+    override suspend fun signInWithGoogle(
+        idToken: String
+    ): Resource<UserResponse> {
+        return try {
+            val credential =
+                GoogleAuthProvider.getCredential(
+                    idToken,
+                    null
+                )
+
+            val result =
+                firebaseAuth
+                    .signInWithCredential(credential)
+                    .await()
+
+            val user = result.user
+                ?: return Resource.Error("User is null")
+
+
+            val token =
+                user.getIdToken(false).await().token
+                    ?: ""
+
+
+            val response = UserResponse(
+                id = user.uid,
+                email = user.email.orEmpty(),
+                created_at = OffsetDateTime.now(),
+                access_token = token,
             )
+
+
+            journAiDataStore.saveUserSession(
+                accessToken = response.access_token,
+                userId = response.id,
+                userEmail = response.email
+            )
+            Resource.Success(response)
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Login failed")
         }
-        return result
     }
 
-    override suspend fun register(email: String, password: String): Resource<UserResponse> {
-        val result = safeApiCall(
-            dispatcher = Dispatchers.IO,
-            apiCall = { apiService.register(RegisterRequest(email, password)) }
-        )
-        if (result is Resource.Success && result.data != null) {
-            journAiDataStore.saveUserSession(
-                accessToken = result.data.access_token,
-                tokenType = result.data.token_type,
-                userId = result.data.id,
-                userEmail = result.data.email,
-            )
-        }
-        return result
-    }
-
-    override suspend fun changePassword(currentPassword: String, newPassword: String): Resource<Unit> {
-        return safeApiCall(
-            dispatcher = Dispatchers.IO,
-            apiCall = { 
-                apiService.changePassword(
-                    ChangePasswordRequest(
-                        current_password = currentPassword,
-                        new_password = newPassword
-                    )
-                ) 
-            }
-        )
-    }
 }

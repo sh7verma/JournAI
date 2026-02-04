@@ -75,6 +75,9 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun getAiTips(journalEntry: JournalDetail) {
+        // Set loading state for this entry
+        _uiState.update { it.copy(loadingTipsForEntryId = journalEntry.id) }
+
         viewModelScope.launch {
             when (val result = aiRepository.getTips(journalEntry.text, journalEntry.id)) {
                 is Resource.Success -> {
@@ -89,7 +92,8 @@ class DetailsViewModel @Inject constructor(
                                         } else {
                                             it
                                         }
-                                    }
+                                    },
+                                    loadingTipsForEntryId = null // Clear loading state
                                 )
                             }
                         }
@@ -97,13 +101,16 @@ class DetailsViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     sendUiEvent(UiEvent.ShowMessage(result.message ?: GlobalResourceProvider.getGlobalString(R.string.error_failed_ai_tips)))
+                    _uiState.update { it.copy(loadingTipsForEntryId = null) } // Clear loading state on error
                 }
             }
-
         }
     }
 
     fun getGrammarCorrection(journalEntry: JournalDetail) {
+        // Set loading state for this entry
+        _uiState.update { it.copy(loadingGrammarForEntryId = journalEntry.id) }
+
         viewModelScope.launch {
             when (val result = aiRepository.correctGrammar(journalEntry.text, journalEntry.id)) {
                 is Resource.Success -> {
@@ -118,7 +125,8 @@ class DetailsViewModel @Inject constructor(
                                         } else {
                                             it
                                         }
-                                    }
+                                    },
+                                    loadingGrammarForEntryId = null // Clear loading state
                                 )
                             }
                         }
@@ -130,6 +138,7 @@ class DetailsViewModel @Inject constructor(
                             result.message ?: GlobalResourceProvider.getGlobalString(R.string.error_failed_grammar_correction)
                         )
                     )
+                    _uiState.update { it.copy(loadingGrammarForEntryId = null) } // Clear loading state on error
                 }
             }
         }
@@ -142,4 +151,6 @@ data class DetailsUiState(
     val selectedDate: OffsetDateTime? = null,
     val moodLabel: String = "",
     val journalEntries: List<JournalDetail> = emptyList(),
+    val loadingTipsForEntryId: String? = null,
+    val loadingGrammarForEntryId: String? = null
 )

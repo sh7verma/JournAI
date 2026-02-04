@@ -134,10 +134,12 @@ fun DetailScreen(
             state.journalEntries.forEach { entry ->
                 DetailedJournalCard(
                     entry = entry,
-                    tips =entry.aiTips,
+                    tips = entry.aiTips,
                     grammarCorrection = entry.grammarCorrection,
                     onGetAiTips = { detailsViewModel.getAiTips(entry) },
-                    onGetGrammarCorrection = { detailsViewModel.getGrammarCorrection(entry) }
+                    onGetGrammarCorrection = { detailsViewModel.getGrammarCorrection(entry) },
+                    isLoadingTips = state.loadingTipsForEntryId == entry.id,
+                    isLoadingGrammar = state.loadingGrammarForEntryId == entry.id
                 )
             }
         }

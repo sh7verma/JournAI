@@ -81,7 +81,7 @@
     <string name="analyze_mood">Analyze Mood</string>
     <string name="mood_analysis">Mood Analysis:</string>
     <string name="error_failed_sentiment_analysis">Failed to analyze sentiment</string>
-    <string name="analyzing_mood">Analyzing your mood...</string>
+    <string name="analyzing_mood">Analyzing your mood…</string>
     <string name="change_password">Change Password</string>
 
     <!-- Change Password Screen -->
@@ -95,5 +95,6 @@
     <string name="password_changed_success">Password changed successfully</string>
     <string name="password_change_error">Failed to change password</string>
     <string name="sign_out">Sign Out</string>
+    <string name="default_web_client_id">113698131570-4s738l4q6ernp303nj9615r2nn1ijfbc.apps.googleusercontent.com</string>
 
 </resources>
